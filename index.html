@@ -5,16 +5,16 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>Form 5472 Checker — Rothbard Group</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,500;8..60,600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
-  /* Rothbard Group brand palette — per Brand Guidelines ©2025
+  /* Rothbard Group — brand palette per Brand Guidelines ©2025, design language per rothbardgroup site direction
      Charcoal #3C3C3B · Linen #EFEDE6 · Burnt Sienna #D97757 · Cordovan #A55364 · Sungold #EBC033
-     Headings: Loretta VF (Adobe) — Source Serif 4 used as web stand-in for this demo; license Loretta via Adobe Fonts for production.
-     Body/UI: Inter */
+     Display: Fraunces (web stand-in for Loretta VF — swap via Adobe Fonts in production) · UI: Inter */
   :root{
-    --charcoal:#3C3C3B; --charcoal-deep:#2E2E2D; --linen:#EFEDE6; --linen-deep:#E6E3D8;
-    --sienna:#D97757; --sienna-deep:#C8643F; --cordovan:#A55364; --sungold:#EBC033;
-    --ink:#3C3C3B; --muted:#7A776E; --card:#FFFFFF; --line:#DEDACD;
+    --charcoal:#3C3C3B; --charcoal-deep:#2F2F2E; --charcoal-soft:#4A4A48;
+    --linen:#EFEDE6; --linen-soft:#F4F2EC; --linen-deep:#E4E1D5;
+    --sienna:#D97757; --sienna-deep:#C4633F; --cordovan:#A55364; --sungold:#EBC033;
+    --ink:#3C3C3B; --muted:#85827A; --faint:#A8A59B; --card:#FFFFFF; --line:#DEDACD; --hair:#E7E4DA;
     --good:#5D7A5A;
   }
   *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
@@ -22,79 +22,90 @@
   body{
     font-family:'Inter',system-ui,-apple-system,sans-serif;color:var(--ink);
     background:var(--linen);min-height:100svh;display:flex;flex-direction:column;align-items:center;
+    -webkit-font-smoothing:antialiased;
   }
-  .wrap{width:100%;max-width:480px;padding:0 20px 48px;display:flex;flex-direction:column;min-height:100svh}
-  /* header */
-  header{padding:20px 0 0;display:flex;align-items:center;justify-content:space-between}
-  .brand img{height:34px;display:block}
-  .proto{font-size:.62rem;letter-spacing:.1em;color:var(--muted);border:1px solid var(--line);border-radius:99px;padding:3px 10px;text-transform:uppercase;font-weight:600}
-  /* progress */
-  .progress{margin:22px 0 8px;height:4px;background:var(--linen-deep);border-radius:99px;overflow:hidden;transition:opacity .3s}
-  .progress i{display:block;height:100%;width:0%;background:linear-gradient(90deg,var(--sienna),var(--sungold));border-radius:99px;transition:width .45s cubic-bezier(.4,0,.2,1)}
-  .stepline{display:flex;justify-content:space-between;font-size:.7rem;color:var(--muted);margin-bottom:6px}
-  /* screens */
-  .screen{flex:1;display:none;flex-direction:column;animation:in .45s cubic-bezier(.25,.6,.3,1) both}
+  .wrap{width:100%;max-width:520px;padding:0 24px 44px;display:flex;flex-direction:column;min-height:100svh}
+  header{padding:26px 0 0;display:flex;align-items:center;justify-content:space-between}
+  .brand img{height:30px;display:block}
+  .proto{font-size:.6rem;letter-spacing:.22em;color:var(--faint);border:1px solid var(--line);border-radius:99px;padding:4px 12px;text-transform:uppercase;font-weight:600}
+  .kicker{display:flex;align-items:center;gap:12px;font-size:.68rem;letter-spacing:.26em;text-transform:uppercase;color:var(--sienna);font-weight:600;margin:34px 0 16px}
+  .kicker:before{content:"";width:26px;height:1px;background:var(--sienna);flex:0 0 auto}
+  .kicker.q{color:var(--muted)}
+  .kicker.q:before{background:var(--sienna)}
+  .progress{margin:24px 0 0;height:2px;background:var(--linen-deep);overflow:hidden;transition:opacity .3s}
+  .progress i{display:block;height:100%;width:0%;background:var(--sienna);transition:width .5s cubic-bezier(.4,0,.2,1)}
+  .stepline{display:flex;justify-content:space-between;font-size:.62rem;letter-spacing:.2em;text-transform:uppercase;color:var(--faint);margin-top:10px;font-weight:600}
+  .screen{flex:1;display:none;flex-direction:column;animation:in .55s cubic-bezier(.22,.6,.25,1) both}
   .screen.active{display:flex}
-  @keyframes in{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
-  .kicker{font-size:.72rem;letter-spacing:.16em;text-transform:uppercase;color:var(--sienna);font-weight:700;margin:26px 0 10px}
-  h1{font-family:'Source Serif 4',Georgia,serif;font-weight:600;font-size:1.95rem;line-height:1.16;color:var(--charcoal);margin-bottom:12px}
-  h2{font-family:'Source Serif 4',Georgia,serif;font-weight:600;font-size:1.45rem;line-height:1.25;color:var(--charcoal);margin:10px 0 8px}
-  .sub{color:var(--muted);font-size:.95rem;line-height:1.55;margin-bottom:22px}
-  .why{display:flex;gap:8px;align-items:flex-start;background:#E7E4D9;border-radius:10px;padding:10px 12px;font-size:.8rem;color:#67645B;line-height:1.45;margin-bottom:20px}
-  .why b{color:var(--charcoal)}
-  /* answers */
+  @keyframes in{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+  h1{font-family:'Fraunces',Georgia,serif;font-optical-sizing:auto;font-weight:500;font-size:2.45rem;line-height:1.08;letter-spacing:-.01em;color:var(--charcoal);margin-bottom:18px}
+  h1 .dim{color:#9B988C}
+  h2{font-family:'Fraunces',Georgia,serif;font-optical-sizing:auto;font-weight:500;font-size:1.6rem;line-height:1.18;letter-spacing:-.005em;color:var(--charcoal);margin:0 0 14px}
+  .sub{color:var(--charcoal-soft);font-size:.98rem;line-height:1.65;margin-bottom:26px;font-weight:400}
+  .trust{display:flex;flex-wrap:wrap;align-items:center;gap:10px 0;font-size:.6rem;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);font-weight:600;margin-bottom:30px}
+  .trust span{display:flex;align-items:center}
+  .trust span+span:before{content:"";width:1px;height:10px;background:var(--line);margin:0 14px}
+  .why{border-left:2px solid var(--sienna);padding:4px 0 4px 14px;font-size:.8rem;color:var(--muted);line-height:1.55;margin-bottom:26px}
+  .why b{color:var(--charcoal);font-weight:600}
+  .why i{color:var(--charcoal-soft)}
   .answers{display:flex;flex-direction:column;gap:10px}
   .ans{
-    text-align:left;background:var(--card);border:1.5px solid var(--line);border-radius:14px;
-    padding:16px 16px;font-size:.98rem;font-weight:600;color:var(--ink);cursor:pointer;
-    display:flex;align-items:center;gap:12px;transition:transform .12s, border-color .15s, box-shadow .15s;
+    text-align:left;background:var(--card);border:1px solid var(--line);border-radius:16px;
+    padding:18px 18px;font-size:.96rem;font-weight:500;color:var(--ink);cursor:pointer;
+    display:flex;align-items:center;gap:14px;transition:transform .14s, border-color .18s, box-shadow .18s;
     font-family:inherit;width:100%;
   }
-  .ans small{display:block;font-weight:400;color:var(--muted);font-size:.8rem;margin-top:2px;line-height:1.4}
-  .ans .dot{flex:0 0 22px;height:22px;border-radius:50%;border:2px solid #CFCBBE;transition:all .15s;position:relative}
+  .ans small{display:block;font-weight:400;color:var(--muted);font-size:.78rem;margin-top:3px;line-height:1.45}
+  .ans .dot{flex:0 0 20px;height:20px;border-radius:50%;border:1.5px solid #C9C5B8;transition:all .18s;position:relative}
+  .ans:hover{border-color:#C9C5B8}
   .ans:active{transform:scale(.985)}
-  .ans.picked{border-color:var(--sienna);box-shadow:0 4px 16px rgba(217,119,87,.18)}
+  .ans.picked{border-color:var(--sienna);box-shadow:0 10px 30px -8px rgba(217,119,87,.28)}
   .ans.picked .dot{border-color:var(--sienna);background:var(--sienna)}
   .ans.picked .dot:after{content:"";position:absolute;inset:5px;border-radius:50%;background:#fff}
-  /* buttons */
   .btn{
-    border:none;border-radius:14px;padding:17px 22px;font-size:1rem;font-weight:700;cursor:pointer;
-    font-family:inherit;width:100%;transition:transform .12s, box-shadow .2s, background .2s;
+    border:none;border-radius:999px;padding:18px 30px;font-size:.95rem;font-weight:600;cursor:pointer;
+    font-family:inherit;width:100%;transition:transform .14s, background .2s, box-shadow .25s;
+    display:flex;align-items:center;justify-content:center;gap:10px;letter-spacing:.01em;
   }
+  .btn .arr{font-size:1.02em;transition:transform .2s}
+  .btn:hover .arr{transform:translate(2px,-2px)}
   .btn:active{transform:scale(.985)}
-  .btn-primary{background:var(--sienna);color:#fff;box-shadow:0 6px 18px rgba(217,119,87,.32)}
+  .btn-primary{background:var(--sienna);color:#fff;box-shadow:0 14px 30px -10px rgba(196,99,63,.45)}
   .btn-primary:hover{background:var(--sienna-deep)}
-  .btn-dark{background:var(--charcoal);color:#fff;box-shadow:0 6px 18px rgba(60,60,59,.25)}
-  .btn-ghost{background:none;color:var(--muted);font-weight:600;padding:12px;width:auto}
-  .nav{margin-top:18px;display:flex;justify-content:center}
-  /* result */
-  .badge{display:inline-flex;align-items:center;gap:8px;font-size:.74rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;border-radius:99px;padding:7px 14px;margin:26px 0 14px}
-  .badge.green{background:#E3EAE0;color:var(--good)}
-  .badge.amber{background:#F7EDCB;color:#8E7415}
-  .badge.red{background:#F2E0E3;color:var(--cordovan)}
-  .badge.navy{background:#E4E2DA;color:var(--charcoal)}
-  .card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px;margin-top:14px}
-  .card h3{font-size:.78rem;letter-spacing:.12em;text-transform:uppercase;color:var(--sienna);margin-bottom:10px}
+  .btn-ghost{background:none;color:var(--muted);font-weight:600;padding:12px;width:auto;font-size:.78rem;letter-spacing:.14em;text-transform:uppercase}
+  .nav{margin-top:20px;display:flex;justify-content:center}
+  .verdict{background:var(--charcoal);border-radius:20px;padding:30px 26px 28px;margin-top:30px;color:var(--linen)}
+  .verdict .kicker{margin:0 0 16px}
+  .badge{display:inline-flex;align-items:center;font-size:.62rem;font-weight:600;letter-spacing:.22em;text-transform:uppercase;border-radius:99px;padding:7px 16px;margin-bottom:18px}
+  .badge.green{background:rgba(122,160,118,.18);color:#A8C3A5}
+  .badge.amber{background:rgba(235,192,51,.14);color:var(--sungold)}
+  .badge.red{background:rgba(217,119,87,.16);color:#E89B7F}
+  .badge.navy{background:rgba(239,237,230,.1);color:#CFCCC2}
+  .verdict h2{color:var(--linen);font-size:1.75rem;line-height:1.14;margin-bottom:14px}
+  .vdesc{font-size:.93rem;line-height:1.7;color:#C9C6BB}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:24px;margin-top:14px}
+  .card h3{display:flex;align-items:center;gap:12px;font-size:.62rem;letter-spacing:.24em;text-transform:uppercase;color:var(--sienna);margin-bottom:14px;font-weight:600}
+  .card h3:before{content:"";width:22px;height:1px;background:var(--sienna)}
   .card ul{list-style:none}
-  .card li{font-size:.92rem;line-height:1.5;padding:7px 0 7px 26px;position:relative;border-bottom:1px solid #F0EDE4}
-  .card li:last-child{border:none}
-  .card li:before{content:"";position:absolute;left:2px;top:14px;width:7px;height:7px;border-radius:50%;background:var(--sienna)}
-  .gate{background:var(--charcoal);border-radius:16px;padding:22px;margin-top:16px;color:#fff}
-  .gate h3{font-family:'Source Serif 4',Georgia,serif;font-size:1.15rem;font-weight:600;margin-bottom:6px;color:var(--linen)}
-  .gate p{font-size:.85rem;color:#C8C5BB;line-height:1.5;margin-bottom:14px}
+  .card li{font-size:.9rem;line-height:1.6;padding:11px 0;color:var(--charcoal-soft);border-bottom:1px solid var(--hair)}
+  .card li:first-child{padding-top:0}
+  .card li:last-child{border:none;padding-bottom:0}
+  .ref{font-size:.7rem;color:var(--faint);margin-top:14px;line-height:1.6}
+  .gate{background:var(--linen-soft);border:1px solid var(--line);border-radius:20px;padding:26px;margin-top:14px}
+  .gate h3{font-family:'Fraunces',Georgia,serif;font-weight:500;font-size:1.25rem;margin-bottom:8px;color:var(--charcoal)}
+  .gate p{font-size:.84rem;color:var(--muted);line-height:1.6;margin-bottom:16px}
   .gate input{
-    width:100%;border:none;border-radius:12px;padding:15px 16px;font-size:1rem;font-family:inherit;margin-bottom:10px;background:#fff;color:var(--ink)
+    width:100%;border:1px solid var(--line);border-radius:999px;padding:16px 22px;font-size:.95rem;font-family:inherit;margin-bottom:10px;background:#fff;color:var(--ink);outline:none;transition:border-color .2s
   }
-  .gate .ok{display:none;background:#4A4A48;border-radius:12px;padding:14px;font-size:.88rem;text-align:center;color:var(--linen)}
-  .disclaimer{font-size:.72rem;color:#9B988D;line-height:1.55;margin-top:22px;text-align:center}
-  .restart{margin-top:14px;text-align:center}
-  .vdesc{font-size:.95rem;line-height:1.6;color:var(--ink)}
-  .ref{font-size:.74rem;color:var(--muted);margin-top:10px;line-height:1.5}
-  footer{margin-top:auto;padding-top:30px;text-align:center;font-size:.66rem;color:#ABA89C;letter-spacing:.06em}
-  @media(min-width:560px){
-    body{justify-content:center;padding:32px 0}
+  .gate input:focus{border-color:var(--sienna)}
+  .gate .ok{display:none;background:#fff;border:1px solid var(--line);border-radius:14px;padding:14px;font-size:.85rem;text-align:center;color:var(--charcoal-soft)}
+  .disclaimer{font-size:.68rem;color:var(--faint);line-height:1.65;margin-top:26px;text-align:center}
+  .restart{margin-top:10px;text-align:center}
+  footer{margin-top:auto;padding-top:34px;text-align:center;font-size:.58rem;color:#B5B2A6;letter-spacing:.22em;text-transform:uppercase;font-weight:600}
+  @media(min-width:600px){
+    body{justify-content:center;padding:36px 0}
     .wrap{min-height:auto}
-    h1{font-size:2.2rem}
+    h1{font-size:2.9rem}
   }
 </style>
 </head>
@@ -105,23 +116,24 @@
     <div class="proto">Prototype</div>
   </header>
 
-  <div class="stepline" id="stepline" style="visibility:hidden"><span id="stepLabel"></span><span id="stepPct"></span></div>
   <div class="progress" id="progress" style="opacity:0"><i id="bar"></i></div>
+  <div class="stepline" id="stepline" style="visibility:hidden"><span id="stepLabel"></span><span id="stepPct"></span></div>
 
   <!-- INTRO -->
   <section class="screen active" id="s-intro">
     <div class="kicker">Free 60-second check</div>
-    <h1>Do you actually need to file Form 5472?</h1>
+    <h1>Do you actually need to file <span class="dim">Form 5472?</span></h1>
     <p class="sub">Six questions. No scaremongering. Foreign owners of US companies face a $25,000-per-year penalty for a form many never hear about — find out in a minute whether it likely applies to you.</p>
+    <div class="trust"><span>IRC-cited logic</span><span>Six questions</span><span>Result stays free</span></div>
     <div class="answers">
-      <button class="btn btn-primary" onclick="start()">Start the check</button>
+      <button class="btn btn-primary" onclick="start()">Start the check <span class="arr">→</span></button>
     </div>
     <div class="nav"><button class="btn btn-ghost" onclick="alert('Demo prototype — this would link to the article: Form 5472: when it applies and whether the $25k penalty is real.')">What is Form 5472?</button></div>
   </section>
 
   <!-- QUESTIONS (injected) -->
   <section class="screen" id="s-q">
-    <div class="kicker" id="qKicker"></div>
+    <div class="kicker q" id="qKicker"></div>
     <h2 id="qTitle"></h2>
     <div class="why" id="qWhy"></div>
     <div class="answers" id="qAnswers"></div>
@@ -130,31 +142,34 @@
 
   <!-- RESULT -->
   <section class="screen" id="s-result">
-    <div id="rBadge"></div>
-    <h2 id="rTitle"></h2>
-    <p class="vdesc" id="rDesc"></p>
+    <div class="verdict">
+      <div class="kicker">Your result</div>
+      <div id="rBadge"></div>
+      <h2 id="rTitle"></h2>
+      <p class="vdesc" id="rDesc"></p>
+    </div>
     <div class="card" id="rCard"></div>
-    <div class="answers" style="margin-top:18px">
+    <div class="answers" style="margin-top:14px">
       <button class="btn btn-primary" id="rCta"></button>
     </div>
     <div class="gate" id="gate">
       <h3>Get the 5472 fact sheet</h3>
       <p>Your result stays free — enter your email only if you want the plain-English PDF: deadlines, what counts as a reportable transaction, and the options if years were missed.</p>
       <input type="email" id="email" placeholder="you@company.com" inputmode="email" autocomplete="email">
-      <button class="btn btn-primary" onclick="capture()">Email me the fact sheet</button>
+      <button class="btn btn-primary" onclick="capture()">Email me the fact sheet <span class="arr">↗</span></button>
       <div class="ok" id="gateOk">✓ Demo: in production this posts to your CRM webhook and triggers the PDF email.</div>
     </div>
     <div class="restart"><button class="btn btn-ghost" onclick="restart()">↺ Start over</button></div>
     <p class="disclaimer">This is general guidance based on your answers, not tax or legal advice. Your facts decide your outcome — that's what a review is for. Prototype: decision logic pending Enrolled Agent sign-off [EA-VERIFY]. Penalty per IRC §6038A(d) and Form 5472 Instructions (Rev. Dec 2024).</p>
   </section>
 
-  <footer>ROTHBARD GROUP · CROSS-BORDER TAX &amp; CORPORATE ADVISORY · PROTOTYPE v0.2</footer>
+  <footer>Rothbard Group · Cross-Border Tax &amp; Corporate Advisory · Prototype v0.3</footer>
 </div>
 
 <script>
 const QUESTIONS = [
   {
-    id:"company", kicker:"Question 1", title:"Do you have a company formed in the US?",
+    id:"company", kicker:"Question 1 of 6", title:"Do you have a company formed in the US?",
     why:"<b>Why we ask:</b> Form 5472 only attaches to US entities (and certain foreign corporations with US business).",
     answers:[
       {v:"llc", t:"Yes — an LLC"},
@@ -163,7 +178,7 @@ const QUESTIONS = [
     ]
   },
   {
-    id:"foreign", kicker:"Question 2", title:"Is any owner a non-US person?",
+    id:"foreign", kicker:"Question 2 of 6", title:"Is any owner a non-US person?",
     why:"<b>Why we ask:</b> 5472 is about foreign ownership. “Non-US person” means not a citizen, green-card holder or US tax resident.",
     answers:[
       {v:"yes", t:"Yes"},
@@ -172,7 +187,7 @@ const QUESTIONS = [
     ]
   },
   {
-    id:"pct", kicker:"Question 3", title:"How much does the non-US person own?",
+    id:"pct", kicker:"Question 3 of 6", title:"How much does the non-US person own?",
     why:"<b>Why we ask:</b> The trigger is 25%+ owned — directly <i>or indirectly</i>. Ownership through other companies or family attribution counts. <i>Heard 10% somewhere? That's the other form — Form 5471, for US persons owning foreign companies. This check is the reverse direction.</i>",
     answers:[
       {v:"p25", t:"25% or more"},
@@ -181,7 +196,7 @@ const QUESTIONS = [
     ]
   },
   {
-    id:"class", kicker:"Question 4", title:"How is the company taxed?",
+    id:"class", kicker:"Question 4 of 6", title:"How is the company taxed?",
     why:"<b>Why we ask:</b> A single-member LLC with no election is “disregarded” — and foreign-owned disregarded entities have their own 5472 duty (filed with a pro-forma 1120).",
     answers:[
       {v:"de", t:"Single-member LLC, no election", s:"“Disregarded entity” — the most common setup"},
@@ -192,7 +207,7 @@ const QUESTIONS = [
     ]
   },
   {
-    id:"trans", kicker:"Question 5", title:"Did ANY money or property move between you and the company this year?",
+    id:"trans", kicker:"Question 5 of 6", title:"Did ANY money or property move between you and the company this year?",
     why:"<b>Why we ask:</b> “Reportable transactions” are broader than people think — for foreign-owned disregarded entities they expressly include putting your own money in, taking it out, loans, and even paying formation costs.",
     answers:[
       {v:"yes", t:"Yes", s:"Including my own capital contributions or paying its costs"},
@@ -201,7 +216,7 @@ const QUESTIONS = [
     ]
   },
   {
-    id:"history", kicker:"Question 6", title:"Have you filed Form 5472 for every year since formation?",
+    id:"history", kicker:"Question 6 of 6", title:"Have you filed Form 5472 for every year since formation?",
     why:"<b>Why we ask:</b> Missed years change the next step — there are established ways to come into compliance, and timing matters.",
     answers:[
       {v:"every", t:"Yes — every year"},
@@ -214,7 +229,6 @@ const QUESTIONS = [
 
 let answers = {};
 let path = [];
-let idx = -1;
 
 const $ = id => document.getElementById(id);
 function show(id){
@@ -222,7 +236,7 @@ function show(id){
   $(id).classList.add('active');
   window.scrollTo({top:0,behavior:'smooth'});
 }
-function start(){ answers={}; path=[]; idx=-1; next(); }
+function start(){ answers={}; path=[]; next(); }
 function restart(){ $('progress').style.opacity=0; $('stepline').style.visibility='hidden'; $('gateOk').style.display='none'; $('email').value=''; show('s-intro'); }
 
 function nextQuestionId(){
@@ -241,23 +255,24 @@ function next(){
   const qid = nextQuestionId();
   if(qid===null){ renderResult(); return; }
   const q = QUESTIONS.find(x=>x.id===qid);
-  path.push(qid); idx = path.length-1;
+  path.push(qid);
   renderQ(q);
 }
 
 function renderQ(q){
-  $('qKicker').textContent = q.kicker + " of 6";
+  $('qKicker').textContent = q.kicker;
   $('qTitle').textContent = q.title;
   $('qWhy').innerHTML = q.why;
   const box = $('qAnswers'); box.innerHTML='';
-  q.answers.forEach(a=>{
+  q.answers.forEach((a,i)=>{
     const btn = document.createElement('button');
     btn.className='ans';
+    btn.style.animation = `in .5s cubic-bezier(.22,.6,.25,1) ${.06*(i+1)}s both`;
     btn.innerHTML = `<span class="dot"></span><span>${a.t}${a.s?`<small>${a.s}</small>`:''}</span>`;
     btn.onclick = ()=>{
       box.querySelectorAll('.ans').forEach(x=>x.classList.remove('picked'));
       btn.classList.add('picked');
-      setTimeout(()=>{ answers[q.id]=a.v; next(); }, 280);
+      setTimeout(()=>{ answers[q.id]=a.v; next(); }, 300);
     };
     box.appendChild(btn);
   });
@@ -287,7 +302,6 @@ function computeVerdict(){
   const unsureCount = ['foreign','pct','trans'].filter(k=>a[k]==='unsure').length + (a.class==='unknown'?1:0);
   if(a.class==='scorp') return V.depends_scorp;
   const isDE = a.class==='de';
-  const inScope = a.pct==='p25' || isDE;
   if(a.pct==='under' && !isDE) return V.notreq_25;
   if(unsureCount>=1) return V.depends;
   if(a.trans==='no') return V.depends_dormant;
@@ -336,7 +350,7 @@ function renderResult(){
   $('rTitle').textContent = v.title;
   $('rDesc').textContent = v.desc;
   $('rCard').innerHTML = `<h3>What this means for you</h3><ul>${v.items.map(i=>`<li>${i}</li>`).join('')}</ul><p class="ref">References: IRC §6038A; Form 5472 Instructions (Rev. Dec 2024), irs.gov. Logic pending EA sign-off.</p>`;
-  $('rCta').textContent = v.cta;
+  $('rCta').innerHTML = v.cta + ' <span class="arr">↗</span>';
   $('rCta').onclick = ()=>alert('Demo prototype — this routes to the matching booking page / application form with your verdict pre-tagged.');
   $('bar').style.width='100%'; $('stepPct').textContent='100%'; $('stepLabel').textContent='Complete';
   show('s-result');
@@ -344,8 +358,8 @@ function renderResult(){
 
 function capture(){
   const e = $('email').value.trim();
-  if(!/.+@.+\..+/.test(e)){ $('email').style.outline='2px solid #A55364'; return; }
-  $('email').style.outline='none';
+  if(!/.+@.+\..+/.test(e)){ $('email').style.borderColor='#A55364'; return; }
+  $('email').style.borderColor='var(--line)';
   $('gateOk').style.display='block';
 }
 </script>
