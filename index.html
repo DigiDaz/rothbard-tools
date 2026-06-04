@@ -255,7 +255,7 @@ const QUESTIONS = [
     why:"<b>Why we ask:</b> A single-member LLC with no election is “disregarded”, and foreign-owned disregarded entities have their own 5472 duty (filed with a pro-forma 1120).",
     answers:[
       {v:"de", t:"Single-member LLC, no election", s:"“Disregarded entity”, the most common setup"},
-      {v:"pship", t:"Partnership (multi-member LLC)"},
+      {v:"pship", t:"Partnership (multi-member LLC)", s:"Two or more members, no corporate election filed"},
       {v:"ccorp", t:"C-corporation"},
       {v:"scorp", t:"S-corporation"},
       {v:"unknown", t:"I don't know"}
@@ -304,6 +304,7 @@ function nextQuestionId(){
   if(answers.foreign==='no') return null;
   if(!('pct' in answers)) return 'pct';
   if(!('class' in answers)) return 'class';
+  if(answers.class==='pship') return null; /* partnership: not a reporting corporation, no 5472 */
   if(!('trans' in answers)) return 'trans';
   if(!('history' in answers)) return 'history';
   return null;
@@ -375,6 +376,7 @@ function computeVerdict(){
   if(a.foreign==='no') return V.notreq_us;
   const unsureCount = ['foreign','pct','trans'].filter(k=>a[k]==='unsure').length + (a.class==='unknown'?1:0);
   if(a.class==='scorp') return V.depends_scorp;
+  if(a.class==='pship') return V.notreq_pship;
   const isDE = a.class==='de';
   if(a.pct==='under' && !isDE) return V.notreq_25;
   if(unsureCount>=1) return V.depends;
@@ -392,6 +394,10 @@ const V = {
     desc:"With all-US ownership, the foreign-ownership trigger isn't met on these answers. Depending on your situation, other filings can still apply.",
     items:["Form 5472 targets 25%+ foreign-owned US entities. Not yours, per your answers","If you own foreign companies or accounts: 5471, FBAR or 8938 may apply instead","Worth re-checking after any ownership change"],
     cta:"Take the Cross-Border Readiness Score"},
+  notreq_pship:{badge:['green','Likely not required'],title:"Taxed as a partnership, so 5472 is not your form",
+    desc:"Form 5472 attaches to reporting corporations: 25%+ foreign-owned US corporations and foreign-owned disregarded entities. A multi-member LLC that has not elected corporate taxation is a partnership, and a partnership is not a reporting corporation. Different filings apply instead.",
+    items:["Your lane is the partnership one: Form 1065 with Schedules K-1, plus K-2/K-3 for international items","US income allocable to foreign partners can trigger Section 1446 withholding (Forms 8804/8805). That's the trap in this lane","If the LLC ever files Form 8832 to be taxed as a corporation, the 5472 duty switches on. Re-check after any election"],
+    cta:"Book a partnership compliance check"},
   notreq_25:{badge:['green','Likely not required'],title:"Below the 25% line, and probably out of scope",
     desc:"On your answers the 25% foreign-ownership trigger isn't met. One honest caveat: indirect and family-attributed ownership counts, and it catches people.",
     items:["The threshold is 25%+ held directly OR indirectly by a foreign person","Holding companies, spouses and family attribution can push you over without realizing","If ownership is layered, a 15-minute scoping call settles it"],
