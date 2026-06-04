@@ -3,13 +3,13 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>Form 5472 Checker — Rothbard Group</title>
+<title>Form 5472 Checker | Rothbard Group</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
-  /* Rothbard Group — brand palette per Brand Guidelines ©2025, design language per rothbardgroup site direction
+  /* Rothbard Group brand palette per Brand Guidelines ©2025, design language per rothbardgroup site direction
      Charcoal #3C3C3B · Linen #EFEDE6 · Burnt Sienna #D97757 · Cordovan #A55364 · Sungold #EBC033
-     Display: Fraunces (web stand-in for Loretta VF — swap via Adobe Fonts in production) · UI: Inter */
+     Display: Fraunces (web stand-in for Loretta VF; swap via Adobe Fonts in production) · UI: Inter */
   :root{
     --charcoal:#3C3C3B; --charcoal-deep:#2F2F2E; --charcoal-soft:#4A4A48;
     --linen:#EFEDE6; --linen-soft:#F4F2EC; --linen-deep:#E4E1D5;
@@ -28,10 +28,8 @@
   header{padding:26px 0 0;display:flex;align-items:center;justify-content:space-between}
   .brand img{height:30px;display:block}
   .proto{font-size:.6rem;letter-spacing:.22em;color:var(--faint);border:1px solid var(--line);border-radius:99px;padding:4px 12px;text-transform:uppercase;font-weight:600}
-  .kicker{display:flex;align-items:center;gap:12px;font-size:.68rem;letter-spacing:.26em;text-transform:uppercase;color:var(--sienna);font-weight:600;margin:34px 0 16px}
-  .kicker:before{content:"";width:26px;height:1px;background:var(--sienna);flex:0 0 auto}
-  .kicker.q{color:var(--muted)}
-  .kicker.q:before{background:var(--sienna)}
+  .kicker{display:flex;align-items:center;font-size:.68rem;letter-spacing:.26em;text-transform:uppercase;color:var(--sienna);font-weight:600;margin:34px 0 16px}
+    .kicker.q{color:var(--muted)}
   .progress{margin:24px 0 0;height:2px;background:var(--linen-deep);overflow:hidden;transition:opacity .3s}
   .progress i{display:block;height:100%;width:0%;background:var(--sienna);transition:width .5s cubic-bezier(.4,0,.2,1)}
   .stepline{display:flex;justify-content:space-between;font-size:.62rem;letter-spacing:.2em;text-transform:uppercase;color:var(--faint);margin-top:10px;font-weight:600}
@@ -85,8 +83,7 @@
   .vdesc{font-size:.93rem;line-height:1.7;color:#C9C6BB}
   .card{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:24px;margin-top:14px}
   .card h3{display:flex;align-items:center;gap:12px;font-size:.62rem;letter-spacing:.24em;text-transform:uppercase;color:var(--sienna);margin-bottom:14px;font-weight:600}
-  .card h3:before{content:"";width:22px;height:1px;background:var(--sienna)}
-  .card ul{list-style:none}
+    .card ul{list-style:none}
   .card li{font-size:.9rem;line-height:1.6;padding:11px 0;color:var(--charcoal-soft);border-bottom:1px solid var(--hair)}
   .card li:first-child{padding-top:0}
   .card li:last-child{border:none;padding-bottom:0}
@@ -123,12 +120,12 @@
   <section class="screen active" id="s-intro">
     <div class="kicker">Free 60-second check</div>
     <h1>Do you actually need to file <span class="dim">Form 5472?</span></h1>
-    <p class="sub">Six questions. No scaremongering. Foreign owners of US companies face a $25,000-per-year penalty for a form many never hear about — find out in a minute whether it likely applies to you.</p>
+    <p class="sub">Six questions. No scaremongering. Foreign owners of US companies face a $25,000-per-year penalty for a form many never hear about. Find out in a minute whether it likely applies to you.</p>
     <div class="trust"><span>IRC-cited logic</span><span>Six questions</span><span>Result stays free</span></div>
     <div class="answers">
       <button class="btn btn-primary" onclick="start()">Start the check <span class="arr">→</span></button>
     </div>
-    <div class="nav"><button class="btn btn-ghost" onclick="alert('Demo prototype — this would link to the article: Form 5472: when it applies and whether the $25k penalty is real.')">What is Form 5472?</button></div>
+    <div class="nav"><button class="btn btn-ghost" onclick="alert('Demo prototype. This would link to the article: Form 5472: when it applies and whether the $25k penalty is real.')">What is Form 5472?</button></div>
   </section>
 
   <!-- QUESTIONS (injected) -->
@@ -154,16 +151,16 @@
     </div>
     <div class="gate" id="gate">
       <h3>Get the 5472 fact sheet</h3>
-      <p>Your result stays free — enter your email only if you want the plain-English PDF: deadlines, what counts as a reportable transaction, and the options if years were missed.</p>
+      <p>Your result stays free. Enter your email only if you want the plain-English PDF: deadlines, what counts as a reportable transaction, and the options if years were missed.</p>
       <input type="email" id="email" placeholder="you@company.com" inputmode="email" autocomplete="email">
       <button class="btn btn-primary" onclick="capture()">Email me the fact sheet <span class="arr">↗</span></button>
       <div class="ok" id="gateOk">✓ Demo: in production this posts to your CRM webhook and triggers the PDF email.</div>
     </div>
     <div class="restart"><button class="btn btn-ghost" onclick="restart()">↺ Start over</button></div>
-    <p class="disclaimer">This is general guidance based on your answers, not tax or legal advice. Your facts decide your outcome — that's what a review is for. Prototype: decision logic pending Enrolled Agent sign-off [EA-VERIFY]. Penalty per IRC §6038A(d) and Form 5472 Instructions (Rev. Dec 2024).</p>
+    <p class="disclaimer">This is general guidance based on your answers, not tax or legal advice. Your facts decide your outcome. That's what a review is for. Prototype: decision logic pending Enrolled Agent sign-off [EA-VERIFY]. Penalty per IRC §6038A(d) and Form 5472 Instructions (Rev. Dec 2024).</p>
   </section>
 
-  <footer>Rothbard Group · Cross-Border Tax &amp; Corporate Advisory · Prototype v0.3</footer>
+  <footer>Rothbard Group · Cross-Border Tax &amp; Corporate Advisory · Prototype v0.4</footer>
 </div>
 
 <script>
@@ -172,8 +169,8 @@ const QUESTIONS = [
     id:"company", kicker:"Question 1 of 6", title:"Do you have a company formed in the US?",
     why:"<b>Why we ask:</b> Form 5472 only attaches to US entities (and certain foreign corporations with US business).",
     answers:[
-      {v:"llc", t:"Yes — an LLC"},
-      {v:"corp", t:"Yes — a corporation (Inc.)"},
+      {v:"llc", t:"Yes, an LLC"},
+      {v:"corp", t:"Yes, a corporation (Inc.)"},
       {v:"no", t:"No US company", s:"We'll point you somewhere more useful"}
     ]
   },
@@ -182,13 +179,13 @@ const QUESTIONS = [
     why:"<b>Why we ask:</b> 5472 is about foreign ownership. “Non-US person” means not a citizen, green-card holder or US tax resident.",
     answers:[
       {v:"yes", t:"Yes"},
-      {v:"no", t:"No — all owners are US persons"},
+      {v:"no", t:"No, all owners are US persons"},
       {v:"unsure", t:"Not sure", s:"e.g., mixed ownership or a holding company in between"}
     ]
   },
   {
     id:"pct", kicker:"Question 3 of 6", title:"How much does the non-US person own?",
-    why:"<b>Why we ask:</b> The trigger is 25%+ owned — directly <i>or indirectly</i>. Ownership through other companies or family attribution counts. <i>Heard 10% somewhere? That's the other form — Form 5471, for US persons owning foreign companies. This check is the reverse direction.</i>",
+    why:"<b>Why we ask:</b> The trigger is 25%+ owned, directly <i>or indirectly</i>. Ownership through other companies or family attribution counts. <i>Heard 10% somewhere? That's the other form (Form 5471, for US persons owning foreign companies). This check is the reverse direction.</i>",
     answers:[
       {v:"p25", t:"25% or more"},
       {v:"under", t:"Less than 25%"},
@@ -197,9 +194,9 @@ const QUESTIONS = [
   },
   {
     id:"class", kicker:"Question 4 of 6", title:"How is the company taxed?",
-    why:"<b>Why we ask:</b> A single-member LLC with no election is “disregarded” — and foreign-owned disregarded entities have their own 5472 duty (filed with a pro-forma 1120).",
+    why:"<b>Why we ask:</b> A single-member LLC with no election is “disregarded”, and foreign-owned disregarded entities have their own 5472 duty (filed with a pro-forma 1120).",
     answers:[
-      {v:"de", t:"Single-member LLC, no election", s:"“Disregarded entity” — the most common setup"},
+      {v:"de", t:"Single-member LLC, no election", s:"“Disregarded entity”, the most common setup"},
       {v:"pship", t:"Partnership (multi-member LLC)"},
       {v:"ccorp", t:"C-corporation"},
       {v:"scorp", t:"S-corporation"},
@@ -208,18 +205,18 @@ const QUESTIONS = [
   },
   {
     id:"trans", kicker:"Question 5 of 6", title:"Did ANY money or property move between you and the company this year?",
-    why:"<b>Why we ask:</b> “Reportable transactions” are broader than people think — for foreign-owned disregarded entities they expressly include putting your own money in, taking it out, loans, and even paying formation costs.",
+    why:"<b>Why we ask:</b> “Reportable transactions” are broader than people think. For foreign-owned disregarded entities they expressly include putting your own money in, taking it out, loans, and even paying formation costs.",
     answers:[
       {v:"yes", t:"Yes", s:"Including my own capital contributions or paying its costs"},
-      {v:"no", t:"No — completely dormant, nothing moved"},
+      {v:"no", t:"No, completely dormant, nothing moved"},
       {v:"unsure", t:"Not sure"}
     ]
   },
   {
     id:"history", kicker:"Question 6 of 6", title:"Have you filed Form 5472 for every year since formation?",
-    why:"<b>Why we ask:</b> Missed years change the next step — there are established ways to come into compliance, and timing matters.",
+    why:"<b>Why we ask:</b> Missed years change the next step. There are established ways to come into compliance, and timing matters.",
     answers:[
-      {v:"every", t:"Yes — every year"},
+      {v:"every", t:"Yes, every year"},
       {v:"some", t:"Some years"},
       {v:"never", t:"Never"},
       {v:"unknown", t:"I didn't know it existed"}
@@ -311,37 +308,37 @@ function computeVerdict(){
 
 const V = {
   nocompany:{badge:['navy','For someone else'],title:"Form 5472 isn't your form",
-    desc:"Without a US entity, the 5472 question doesn't arise for you. But if you're operating cross-border, other exposure might — that's worth 3 minutes.",
-    items:["No US entity = no 5472 reporting-corporation status","If you own a foreign company as a US person, Form 5471 is the one to ask about","Cross-border structures have their own checklist — see the Readiness Score"],
+    desc:"Without a US entity, the 5472 question doesn't arise for you. But if you're operating cross-border, other exposure might be. That's worth 3 minutes.",
+    items:["No US entity means no 5472 reporting-corporation status","If you own a foreign company as a US person, Form 5471 is the one to ask about","Cross-border structures have their own checklist. See the Readiness Score"],
     cta:"Take the Cross-Border Readiness Score"},
-  notreq_us:{badge:['green','Likely not required'],title:"5472 likely doesn't apply — here's what might",
+  notreq_us:{badge:['green','Likely not required'],title:"5472 likely doesn't apply. Here's what might",
     desc:"With all-US ownership, the foreign-ownership trigger isn't met on these answers. Depending on your situation, other filings can still apply.",
-    items:["Form 5472 targets 25%+ foreign-owned US entities — not yours, per your answers","If you own foreign companies or accounts: 5471, FBAR or 8938 may apply instead","Worth re-checking after any ownership change"],
+    items:["Form 5472 targets 25%+ foreign-owned US entities. Not yours, per your answers","If you own foreign companies or accounts: 5471, FBAR or 8938 may apply instead","Worth re-checking after any ownership change"],
     cta:"Take the Cross-Border Readiness Score"},
-  notreq_25:{badge:['green','Likely not required'],title:"Below the 25% line — probably out of scope",
+  notreq_25:{badge:['green','Likely not required'],title:"Below the 25% line, and probably out of scope",
     desc:"On your answers the 25% foreign-ownership trigger isn't met. One honest caveat: indirect and family-attributed ownership counts, and it catches people.",
     items:["The threshold is 25%+ held directly OR indirectly by a foreign person","Holding companies, spouses and family attribution can push you over without realizing","If ownership is layered, a 15-minute scoping call settles it"],
     cta:"Book a 15-minute scoping call"},
   depends:{badge:['amber','It depends'],title:"Yours is exactly the profile the internet gets wrong",
-    desc:"One or more of your answers ('not sure') sits on the exact lines — ownership attribution, entity classification — where confident online answers are wrong in both directions.",
-    items:["Indirect/attributed ownership decides the 25% test — not just what's on paper","Entity classification (disregarded vs partnership vs corporation) changes which rules apply","This is a 15-minute determination with the right documents in hand"],
+    desc:"One or more of your answers ('not sure') sits on the exact lines (ownership attribution, entity classification) where confident online answers are wrong in both directions.",
+    items:["Indirect/attributed ownership decides the 25% test, not just what's on paper","Entity classification (disregarded vs partnership vs corporation) changes which rules apply","This is a 15-minute determination with the right documents in hand"],
     cta:"Book a 15-minute scoping call"},
   depends_scorp:{badge:['amber','Needs attention'],title:"An S-corporation with foreign ownership is its own issue",
-    desc:"S-corporation eligibility rules around non-US shareholders are strict — and a foot fault there is a bigger problem than Form 5472. This needs a person, not a quiz.",
-    items:["S-corp shareholder eligibility rules are unforgiving — status can be invalidated","If the election fails, the entity's whole tax treatment changes retroactively","Priority review recommended before anything else is filed"],
+    desc:"S-corporation eligibility rules around non-US shareholders are strict, and a foot fault there is a bigger problem than Form 5472. This needs a person, not a quiz.",
+    items:["S-corp shareholder eligibility rules are unforgiving: status can be invalidated","If the election fails, the entity's whole tax treatment changes retroactively","Priority review recommended before anything else is filed"],
     cta:"Book a priority consult"},
   depends_dormant:{badge:['amber','Close call'],title:"“Nothing moved” is rarer than people think",
-    desc:"Truly zero transactions can mean no 5472 for the year — but for foreign-owned disregarded entities, formation costs, capital you put in and expenses you covered all count. Most 'dormant' companies aren't.",
-    items:["Formation-year filings are the classic miss — paying the formation fee counts","Covering the LLC's costs from personal funds is a reportable transaction","If genuinely nothing ever moved, document it and re-check annually"],
+    desc:"Truly zero transactions can mean no 5472 for the year. But for foreign-owned disregarded entities, formation costs, capital you put in and expenses you covered all count. Most 'dormant' companies aren't.",
+    items:["Formation-year filings are the classic miss: paying the formation fee counts","Covering the LLC's costs from personal funds is a reportable transaction","If genuinely nothing ever moved, document it and re-check annually"],
     cta:"Book a 15-minute scoping call"},
-  req_current:{badge:['green','Likely required — and handled'],title:"The duty likely applies — and you appear on top of it",
+  req_current:{badge:['green','Likely required, and handled'],title:"The duty likely applies, and you appear on top of it",
     desc:"On these answers the filing obligation likely applies, and you're filing. Good. Three things still catch current filers:",
-    items:["Completeness: every related-party transaction category, not just the obvious ones","The pro-forma 1120 wrapper and its deadline (incl. extensions) each year","Ownership or classification changes mid-year change the filing — flag them early"],
+    items:["Completeness: every related-party transaction category, not just the obvious ones","The pro-forma 1120 wrapper and its deadline (incl. extensions) each year","Ownership or classification changes mid-year change the filing. Flag them early"],
     cta:"Book an annual compliance check"},
-  req_missed:{badge:['red','Likely required — missed years'],title:"Filings were likely missed. Fixable — act before the IRS does.",
-    desc:"Your answers suggest Form 5472 obligations in years that weren't filed. The penalty is real — $25,000 per form per year, plus another $25,000 per 30 days if unresolved 90 days after IRS notice — but there are established ways to come into compliance, and acting before the IRS contacts you matters.",
-    items:["Don't rush a bare late filing — the right sequencing affects penalty exposure","Reasonable-cause and compliance procedures exist; eligibility depends on your facts","Bring: formation docs, ownership history, and what moved in/out each year"],
-    cta:"Book a compliance consult — priority"},
+  req_missed:{badge:['red','Likely required: missed years'],title:"Filings were likely missed. Fixable, if you act before the IRS does.",
+    desc:"Your answers suggest Form 5472 obligations in years that weren't filed. The penalty is real: $25,000 per form per year, plus another $25,000 per 30 days if unresolved 90 days after IRS notice. But there are established ways to come into compliance, and acting before the IRS contacts you matters.",
+    items:["Don't rush a bare late filing. The right sequencing affects penalty exposure","Reasonable-cause and compliance procedures exist; eligibility depends on your facts","Bring: formation docs, ownership history, and what moved in/out each year"],
+    cta:"Book a priority compliance consult"},
 };
 
 function renderResult(){
@@ -351,7 +348,7 @@ function renderResult(){
   $('rDesc').textContent = v.desc;
   $('rCard').innerHTML = `<h3>What this means for you</h3><ul>${v.items.map(i=>`<li>${i}</li>`).join('')}</ul><p class="ref">References: IRC §6038A; Form 5472 Instructions (Rev. Dec 2024), irs.gov. Logic pending EA sign-off.</p>`;
   $('rCta').innerHTML = v.cta + ' <span class="arr">↗</span>';
-  $('rCta').onclick = ()=>alert('Demo prototype — this routes to the matching booking page / application form with your verdict pre-tagged.');
+  $('rCta').onclick = ()=>alert('Demo prototype. This routes to the matching booking page / application form with your verdict pre-tagged.');
   $('bar').style.width='100%'; $('stepPct').textContent='100%'; $('stepLabel').textContent='Complete';
   show('s-result');
 }
