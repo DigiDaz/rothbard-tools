@@ -236,18 +236,29 @@ function buildQuestion(qid){
       {v:"no", t:"No US company", s:"We'll point you somewhere more useful"}
     ]};
   if(qid==="owners") return { id:qid, n, kicker, title:"Are you the only owner of the company?",
-    why:"<b>Why we ask:</b> A sole owner holds 100% by definition, so the 25% question answers itself. Co-owners change which rules, and which forms, apply.",
+    why:"<b>Why we ask:</b> A sole owner holds 100% by definition, so the 25% foreign-ownership threshold that decides who must file Form 5472 is settled automatically. Co-owners change which rules, and which forms, apply.",
     answers:[
       {v:"solo", t:"Yes, just me", s:"You own 100%"},
       {v:"multi", t:"No, there are other owners", s:"Partners, investors, a spouse, or a holding company"}
     ]};
-  if(qid==="foreign") return { id:qid, n, kicker, title:"Is any owner a non-US person?",
-    why:"<b>Why we ask:</b> 5472 is about foreign ownership. “Non-US person” means not a citizen, green-card holder or US tax resident.",
-    answers:[
-      {v:"yes", t:"Yes"},
-      {v:"no", t:"No, all owners are US persons"},
-      {v:"unsure", t:"Not sure", s:"e.g., mixed ownership or a holding company in between"}
-    ]};
+  if(qid==="foreign"){
+    if(answers.owners==="solo") return { id:qid, n, kicker, title:"Which of these describes you?",
+      why:"<b>Why we ask:</b> Form 5472 applies when the owner is a non-US person: not a US citizen, not a green-card holder, and not a US tax resident.",
+      answers:[
+        {v:"no", t:"US citizen"},
+        {v:"no", t:"Green-card holder"},
+        {v:"no", t:"US tax resident", s:"You live in the US full time or meet the substantial-presence test"},
+        {v:"yes", t:"None of these", s:"Non-US citizen, no green card, living outside the United States"},
+        {v:"unsure", t:"Not sure", s:"e.g., visa situations or a part-year move"}
+      ]};
+    return { id:qid, n, kicker, title:"Is any owner a non-US person?",
+      why:"<b>Why we ask:</b> 5472 is about foreign ownership. “Non-US person” means not a citizen, green-card holder or US tax resident.",
+      answers:[
+        {v:"yes", t:"Yes, at least one non-US owner"},
+        {v:"no", t:"No, all owners are US persons"},
+        {v:"unsure", t:"Not sure", s:"e.g., mixed ownership or a holding company in between"}
+      ]};
+  }
   if(qid==="pct") return { id:qid, n, kicker, title:"Does any non-US person own 25% or more?",
     why:"<b>Why we ask:</b> The trigger is 25%+ owned, directly <i>or indirectly</i>. Ownership through other companies or family attribution counts. <i>Heard 10% somewhere? That's the other form (Form 5471, for US persons owning foreign companies). This check is the reverse direction.</i>",
     answers:[
@@ -299,7 +310,7 @@ function buildQuestion(qid){
     ]};
   return null;
 }
-const QLABEL = {company:"US company",owners:"Owners",foreign:"Foreign owner",pct:"Ownership",class:"Taxed as",trans:"Transactions",history:"Filing history"};
+const QLABEL = {company:"US company",owners:"Owners",foreign:"US status",pct:"Ownership",class:"Taxed as",trans:"Transactions",history:"Filing history"};
 
 let answers = {};
 let labels = {};
