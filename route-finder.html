@@ -241,12 +241,13 @@ function buildQuestion(qid){
       {v:"unsure",t:"Not sure",s:"We'll note it in your result"}
     ]};
   if(qid==="who") return {id:qid,n,kicker,title:"Who is moving?",
-    why:"<b>Why we ask:</b> Dependants change the income thresholds and the paperwork. Parents have their own path.",
+    why:"<b>Why we ask:</b> Dependants change the income thresholds and the paperwork. And one thing better known early: Panama recognizes only marriages valid under its own law. Common-law unions and same-sex marriages are not recognized there, even when valid where performed, so some couples file two linked applications, planned as one move.",
     answers:[
       {v:"solo",t:"Just me"},
-      {v:"couple",t:"My partner and me"},
+      {v:"spouse",t:"My spouse and me",s:"A marriage Panama recognizes"},
+      {v:"partner",t:"My partner and me",s:"Unmarried, common-law, or a marriage Panama does not recognize: two linked applications"},
       {v:"family",t:"Family with children"},
-      {v:"parents",t:"Including parents"}
+      {v:"grandparents",t:"Family with children, including grandparents",s:"Grandparents coming to help with the kids"}
     ]};
   if(qid==="income") return {id:qid,n,kicker,title:"Do you receive guaranteed lifetime monthly income?",
     why:"<b>Why we ask:</b> The Pensionado needs income guaranteed for life: a government or employer pension, or a lifetime annuity. 401(k) withdrawals and rental income generally do NOT qualify. That is the single most common misconception.",
@@ -442,6 +443,7 @@ function renderResult(){
   let runnerHtml="";
   if(runner) runnerHtml=`<b>Runner-up: ${runner[0]}.</b> Why not first: ${runner[1]}.`;
   if(answers.passport==="unsure"&&key.startsWith("fnv")) runnerHtml+=`${runnerHtml?"<br>":""}<b>One check first:</b> confirm your passport is on the current Friendly Nations list. It changes, and your result assumes a yes.`;
+  if(answers.who==="partner") runnerHtml+=`${runnerHtml?"<br>":""}<b>Two applications, one plan:</b> because Panama does not recognize common-law or same-sex marriages, you and your partner each file your own application. They are planned, sequenced and budgeted together.`;
   $('rRunner').innerHTML=runnerHtml; $('rRunner').style.display=runnerHtml?"block":"none";
   $('rRecap').innerHTML=Object.keys(labels).map(k=>`<span>${QLABEL[k]||k}: ${labels[k]}</span>`).join('');
   $('rFacts').innerHTML=v.facts.map(f=>`<div><span>${f[0]}</span><b>${f[1]}</b></div>`).join('');
