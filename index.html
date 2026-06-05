@@ -155,7 +155,7 @@
     </div>
     <div class="marks">
       <div><span>Logic</span><b>IRC-cited</b></div>
-      <div><span>Length</span><b>Six questions</b></div>
+      <div><span>Length</span><b>Six or seven questions</b></div>
       <div><span>Your result</span><b>Free, no email wall</b></div>
     </div>
     <div class="proto">Prototype</div>
@@ -175,8 +175,8 @@
     <section class="screen active" id="s-intro">
       <div class="kicker">Free 60-second check</div>
       <h1>Do you <em>actually</em> need to file <span class="dim">Form 5472?</span></h1>
-      <p class="sub">Six questions. No scaremongering. Foreign owners of US companies face a $25,000-per-year penalty for a form many never hear about. Find out in a minute whether it likely applies to you.</p>
-      <div class="trust"><span>IRC-cited logic</span><span>Six questions</span><span>Result stays free</span></div>
+      <p class="sub">Six or seven quick questions. No scaremongering. Foreign owners of US companies face a $25,000-per-year penalty for a form many never hear about. Find out in a minute whether it likely applies to you.</p>
+      <div class="trust"><span>IRC-cited logic</span><span>Under 2 minutes</span><span>Result stays free</span></div>
       <div class="answers">
         <button class="btn btn-primary" onclick="start()">Start the check <span class="arr">→</span></button>
       </div>
@@ -222,66 +222,84 @@
 </div>
 
 <script>
-const QUESTIONS = [
-  {
-    id:"company", n:"01", kicker:"Question 1 of 6", title:"Do you have a company formed in the US?",
+function totalSteps(){ return answers.owners==="multi" ? 7 : 6; }
+
+function buildQuestion(qid){
+  const num = path.length + 1;
+  const n = String(num).padStart(2,"0");
+  const kicker = `Question ${num} of ${totalSteps()}`;
+  if(qid==="company") return { id:qid, n, kicker, title:"Do you have a company formed in the US?",
     why:"<b>Why we ask:</b> Form 5472 only attaches to US entities (and certain foreign corporations with US business).",
     answers:[
       {v:"llc", t:"Yes, an LLC"},
       {v:"corp", t:"Yes, a corporation (Inc.)"},
       {v:"no", t:"No US company", s:"We'll point you somewhere more useful"}
-    ]
-  },
-  {
-    id:"foreign", n:"02", kicker:"Question 2 of 6", title:"Is any owner a non-US person?",
+    ]};
+  if(qid==="owners") return { id:qid, n, kicker, title:"Are you the only owner of the company?",
+    why:"<b>Why we ask:</b> A sole owner holds 100% by definition, so the 25% question answers itself. Co-owners change which rules, and which forms, apply.",
+    answers:[
+      {v:"solo", t:"Yes, just me", s:"You own 100%"},
+      {v:"multi", t:"No, there are other owners", s:"Partners, investors, a spouse, or a holding company"}
+    ]};
+  if(qid==="foreign") return { id:qid, n, kicker, title:"Is any owner a non-US person?",
     why:"<b>Why we ask:</b> 5472 is about foreign ownership. “Non-US person” means not a citizen, green-card holder or US tax resident.",
     answers:[
       {v:"yes", t:"Yes"},
       {v:"no", t:"No, all owners are US persons"},
       {v:"unsure", t:"Not sure", s:"e.g., mixed ownership or a holding company in between"}
-    ]
-  },
-  {
-    id:"pct", n:"03", kicker:"Question 3 of 6", title:"How much does the non-US person own?",
+    ]};
+  if(qid==="pct") return { id:qid, n, kicker, title:"Does any non-US person own 25% or more?",
     why:"<b>Why we ask:</b> The trigger is 25%+ owned, directly <i>or indirectly</i>. Ownership through other companies or family attribution counts. <i>Heard 10% somewhere? That's the other form (Form 5471, for US persons owning foreign companies). This check is the reverse direction.</i>",
     answers:[
-      {v:"p25", t:"25% or more"},
-      {v:"under", t:"Less than 25%"},
+      {v:"p25", t:"Yes, 25% or more"},
+      {v:"under", t:"No, every non-US owner is under 25%"},
       {v:"unsure", t:"Not sure", s:"Indirect and attributed ownership make this genuinely tricky"}
-    ]
-  },
-  {
-    id:"class", n:"04", kicker:"Question 4 of 6", title:"How is the company taxed?",
-    why:"<b>Why we ask:</b> A single-member LLC with no election is “disregarded”, and foreign-owned disregarded entities have their own 5472 duty (filed with a pro-forma 1120).",
-    answers:[
-      {v:"de", t:"Single-member LLC, no election", s:"“Disregarded entity”, the most common setup"},
-      {v:"pship", t:"Partnership (multi-member LLC)", s:"Two or more members, no corporate election filed"},
-      {v:"ccorp", t:"C-corporation"},
-      {v:"scorp", t:"S-corporation"},
-      {v:"unknown", t:"I don't know"}
-    ]
-  },
-  {
-    id:"trans", n:"05", kicker:"Question 5 of 6", title:"Did ANY money or property move between you and the company this year?",
+    ]};
+  if(qid==="class"){
+    let opts;
+    if(answers.company==="corp"){
+      opts=[
+        {v:"ccorp", t:"C-corporation", s:"The default for corporations"},
+        {v:"scorp", t:"S-corporation", s:"Form 2553 election filed"},
+        {v:"unknown", t:"I don't know"}
+      ];
+    } else if(answers.owners==="solo"){
+      opts=[
+        {v:"de", t:"Single-member LLC, no election", s:"“Disregarded entity”, the default and most common setup"},
+        {v:"ccorp", t:"Elected C-corporation taxation", s:"Form 8832 filed"},
+        {v:"scorp", t:"Elected S-corporation taxation", s:"Form 2553 filed"},
+        {v:"unknown", t:"I don't know"}
+      ];
+    } else {
+      opts=[
+        {v:"pship", t:"Partnership", s:"The default for multi-member LLCs, no corporate election filed"},
+        {v:"ccorp", t:"Elected C-corporation taxation", s:"Form 8832 filed"},
+        {v:"scorp", t:"Elected S-corporation taxation", s:"Form 2553 filed"},
+        {v:"unknown", t:"I don't know"}
+      ];
+    }
+    return { id:qid, n, kicker, title:"How is the company taxed?",
+      why:"<b>Why we ask:</b> The tax classification decides which 5472 rules apply. A single-member LLC with no election is “disregarded”, and foreign-owned disregarded entities have their own 5472 duty (filed with a pro-forma 1120).",
+      answers:opts };
+  }
+  if(qid==="trans") return { id:qid, n, kicker, title:"Did ANY money or property move between you and the company this year?",
     why:"<b>Why we ask:</b> “Reportable transactions” are broader than people think. For foreign-owned disregarded entities they expressly include putting your own money in, taking it out, loans, and even paying formation costs.",
     answers:[
       {v:"yes", t:"Yes", s:"Including my own capital contributions or paying its costs"},
       {v:"no", t:"No, completely dormant, nothing moved"},
       {v:"unsure", t:"Not sure"}
-    ]
-  },
-  {
-    id:"history", n:"06", kicker:"Question 6 of 6", title:"Have you filed Form 5472 for every year since formation?",
+    ]};
+  if(qid==="history") return { id:qid, n, kicker, title:"Have you filed Form 5472 for every year since formation?",
     why:"<b>Why we ask:</b> Missed years change the next step. There are established ways to come into compliance, and timing matters.",
     answers:[
       {v:"every", t:"Yes, every year"},
       {v:"some", t:"Some years"},
       {v:"never", t:"Never"},
       {v:"unknown", t:"I didn't know it existed"}
-    ]
-  }
-];
-const QLABEL = {company:"US company",foreign:"Foreign owner",pct:"Ownership",class:"Taxed as",trans:"Transactions",history:"Filing history"};
+    ]};
+  return null;
+}
+const QLABEL = {company:"US company",owners:"Owners",foreign:"Foreign owner",pct:"Ownership",class:"Taxed as",trans:"Transactions",history:"Filing history"};
 
 let answers = {};
 let labels = {};
@@ -300,9 +318,10 @@ function restart(){ currentQ=null; $('progress').style.opacity=0; $('stepline').
 function nextQuestionId(){
   if(!('company' in answers)) return 'company';
   if(answers.company==='no') return null;
+  if(!('owners' in answers)) return 'owners';
   if(!('foreign' in answers)) return 'foreign';
   if(answers.foreign==='no') return null;
-  if(!('pct' in answers)) return 'pct';
+  if(answers.owners==='multi' && !('pct' in answers)) return 'pct'; /* sole owner = 100% by definition, skip */
   if(!('class' in answers)) return 'class';
   if(answers.class==='pship') return null; /* partnership: not a reporting corporation, no 5472 */
   if(!('trans' in answers)) return 'trans';
@@ -313,7 +332,7 @@ function nextQuestionId(){
 function next(){
   const qid = nextQuestionId();
   if(qid===null){ currentQ=null; renderResult(); return; }
-  const q = QUESTIONS.find(x=>x.id===qid);
+  const q = buildQuestion(qid);
   path.push(qid);
   renderQ(q);
 }
@@ -339,11 +358,12 @@ function renderQ(q){
     box.appendChild(btn);
   });
   const stepNum = path.length;
+  const tot = totalSteps();
   $('stepline').style.visibility='visible';
   $('progress').style.opacity=1;
-  $('stepLabel').textContent = `Step ${stepNum} of 6`;
-  $('stepPct').textContent = Math.round(stepNum/6*100)+'%';
-  $('bar').style.width = (stepNum/6*100)+'%';
+  $('stepLabel').textContent = `Step ${stepNum} of ${tot}`;
+  $('stepPct').textContent = Math.round(stepNum/tot*100)+'%';
+  $('bar').style.width = (stepNum/tot*100)+'%';
   show('s-q');
   $('s-q').style.animation='none'; $('s-q').offsetHeight; $('s-q').style.animation='';
 }
