@@ -3,13 +3,13 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>Form 5472 Checker | Rothbard Group</title>
+<title>Canada Departure-Tax Check | Rothbard Group</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400;1,9..144,500&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
-  /* Rothbard Group brand palette per Brand Guidelines ©2025
-     Charcoal #3C3C3B · Linen #EFEDE6 · Burnt Sienna #D97757 · Cordovan #A55364 · Sungold #EBC033
-     Display: Fraunces (web stand-in for Loretta VF; swap via Adobe Fonts in production) · UI: Inter (brand complementary font) */
+  /* Rothbard Group brand palette per Brand Guidelines (c)2025
+     Charcoal #3C3C3B / Linen #EFEDE6 / Burnt Sienna #D97757 / Cordovan #A55364 / Sungold #EBC033
+     Display: Fraunces (web stand-in for Loretta VF; swap via Adobe Fonts in production) / UI: Inter */
   :root{
     --charcoal:#3C3C3B; --charcoal-deep:#2F2F2E; --charcoal-soft:#4A4A48;
     --linen:#EFEDE6; --linen-soft:#F6F4EF; --linen-deep:#E4E1D5;
@@ -24,12 +24,11 @@
     background:var(--linen);min-height:100svh;
     -webkit-font-smoothing:antialiased;
   }
-  button:focus-visible, input:focus-visible{outline:2px solid var(--sienna);outline-offset:3px}
+  button:focus-visible, input:focus-visible, select:focus-visible{outline:2px solid var(--sienna);outline-offset:3px}
   @media (prefers-reduced-motion: reduce){
     *,*:before,*:after{animation-duration:.01ms!important;transition-duration:.01ms!important}
   }
   .shell{min-height:100svh;display:flex;justify-content:center}
-  /* left editorial rail (desktop only) */
   .rail{display:none}
   .wrap{width:100%;max-width:520px;padding:0 24px 44px;display:flex;flex-direction:column;min-height:100svh}
   header{padding:26px 0 0;display:flex;align-items:center;justify-content:space-between}
@@ -64,12 +63,14 @@
   }
   .ans small{display:block;font-weight:400;color:var(--muted);font-size:.78rem;margin-top:3px;line-height:1.45}
   .ans .dot{flex:0 0 20px;height:20px;border-radius:50%;border:1.5px solid #C9C5B8;transition:all .18s;position:relative}
+  .ans.multi .dot{border-radius:6px}
   .ans .key{display:none;position:absolute;right:14px;top:50%;transform:translateY(-50%);font-size:.62rem;font-weight:600;color:var(--faint);border:1px solid var(--hair);border-radius:5px;padding:2px 7px;letter-spacing:.05em}
   .ans:hover{border-color:#C9C5B8}
   .ans:active{transform:scale(.985)}
   .ans.picked{border-color:var(--sienna);box-shadow:0 10px 30px -8px rgba(217,119,87,.28)}
   .ans.picked .dot{border-color:var(--sienna);background:var(--sienna)}
   .ans.picked .dot:after{content:"";position:absolute;inset:5px;border-radius:50%;background:#fff}
+  .ans.multi.picked .dot:after{border-radius:2px}
   .btn{
     border:none;border-radius:999px;padding:18px 30px;font-size:.95rem;font-weight:600;cursor:pointer;
     font-family:inherit;width:100%;transition:transform .14s, background .2s, box-shadow .25s;
@@ -80,8 +81,14 @@
   .btn:active{transform:scale(.985)}
   .btn-primary{background:var(--sienna);color:#fff;box-shadow:0 14px 30px -10px rgba(196,99,63,.45)}
   .btn-primary:hover{background:var(--sienna-deep)}
+  .btn-primary:disabled{background:#CFCBBE;box-shadow:none;cursor:not-allowed}
   .btn-ghost{background:none;color:var(--muted);font-weight:600;padding:12px;width:auto;font-size:.78rem;letter-spacing:.14em;text-transform:uppercase}
   .nav{margin-top:20px;display:flex;justify-content:center}
+  .continue{margin-top:18px}
+  select.prov{
+    width:100%;border:1px solid var(--line);border-radius:12px;padding:17px 16px;font-size:.96rem;
+    font-family:inherit;background:#fff;color:var(--ink);appearance:none;cursor:pointer;
+  }
   .verdict{background:var(--charcoal);border-radius:18px;padding:30px 26px 28px;margin-top:30px;color:var(--linen)}
   .verdict .kicker{margin:0 0 16px}
   .badge{display:inline-flex;align-items:center;font-size:.62rem;font-weight:600;letter-spacing:.22em;text-transform:uppercase;border-radius:99px;padding:7px 16px;margin-bottom:18px}
@@ -100,6 +107,16 @@
   .card li:first-child{padding-top:0}
   .card li:last-child{border:none;padding-bottom:0}
   .ref{font-size:.7rem;color:var(--faint);margin-top:14px;line-height:1.6}
+  /* per-asset verdict rows: fixed tag column so titles align */
+  .assetrow{display:grid;grid-template-columns:112px 1fr;column-gap:14px;align-items:start;padding:13px 0;border-bottom:1px solid var(--hair)}
+  .assetrow:first-of-type{padding-top:0}
+  .assetrow:last-of-type{border:none;padding-bottom:0}
+  .assetrow .tag{justify-self:start;white-space:nowrap;font-size:.56rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;border-radius:99px;padding:5px 10px;margin-top:2px}
+  .tag.hit{background:rgba(217,119,87,.13);color:var(--sienna-deep)}
+  .tag.safe{background:rgba(93,122,90,.12);color:var(--good)}
+  .tag.dep{background:rgba(235,192,51,.18);color:#8F7414}
+  .assetrow b{display:block;font-size:.9rem;font-weight:600;color:var(--charcoal)}
+  .assetrow p{font-size:.78rem;color:var(--muted);line-height:1.55;margin-top:2px}
   .gate{background:var(--linen-soft);border:1px solid var(--line);border-radius:14px;padding:26px;margin-top:14px}
   .gate h3{font-family:'Fraunces',Georgia,serif;font-weight:500;font-size:1.25rem;margin-bottom:8px;color:var(--charcoal)}
   .gate p{font-size:.84rem;color:var(--muted);line-height:1.6;margin-bottom:16px}
@@ -137,7 +154,6 @@
     .wrap{display:flex;flex-direction:column;justify-content:center}
     .flowbox{margin:auto 0;width:100%;max-width:560px}
     h1{font-size:2.7rem}
-    .ans{border-radius:12px}
     .ans .key{display:block}
     .progress{background:var(--hair)}
     footer{text-align:left;max-width:560px}
@@ -150,12 +166,12 @@
     <div class="brand"><img alt="Rothbard Group"></div>
     <div class="statement">
       <div class="kicker">Cross-border tools</div>
-      <h2>Sixty seconds to know <em>where you stand.</em></h2>
-      <p>A precise, plain-English read on whether the Form 5472 filing duty touches you. Built by a cross-border advisory firm, cited to the Internal Revenue Code, and honest when the answer is "it depends."</p>
+      <h2>See what the departure tax <em>actually touches.</em></h2>
+      <p>Leaving Canada triggers a deemed sale of some assets, not others. Three minutes, asset by asset, cited to the Income Tax Act and CRA guidance. Honest bands, no fake dollar estimates.</p>
     </div>
     <div class="marks">
-      <div><span>Logic</span><b>IRC-cited</b></div>
-      <div><span>Length</span><b>Six questions</b></div>
+      <div><span>Logic</span><b>CRA-cited</b></div>
+      <div><span>Length</span><b>About 3 minutes</b></div>
       <div><span>Your result</span><b>Free, no email wall</b></div>
     </div>
     <div class="proto">Prototype</div>
@@ -173,14 +189,14 @@
 
     <!-- INTRO -->
     <section class="screen active" id="s-intro">
-      <div class="kicker">Free 60-second check</div>
-      <h1>Do you <em>actually</em> need to file <span class="dim">Form 5472?</span></h1>
-      <p class="sub">Six questions. No scaremongering. Foreign owners of US companies face a $25,000-per-year penalty for a form many never hear about. Find out in a minute whether it likely applies to you.</p>
-      <div class="trust"><span>IRC-cited logic</span><span>Six questions</span><span>Result stays free</span></div>
+      <div class="kicker">Free 3-minute check</div>
+      <h1>Leaving Canada? See what the <em>departure tax</em> <span class="dim">touches.</span></h1>
+      <p class="sub">The day you become a non-resident, the CRA treats some of your assets as sold at fair market value. Some are caught, some are excluded, and a few depend on your facts. Map yours in about three minutes.</p>
+      <div class="trust"><span>ITA &amp; CRA cited</span><span>Asset by asset</span><span>Result stays free</span></div>
       <div class="answers">
         <button class="btn btn-primary" onclick="start()">Start the check <span class="arr">→</span></button>
       </div>
-      <div class="nav"><button class="btn btn-ghost" onclick="alert('Demo prototype. This would link to the article: Form 5472: when it applies and whether the $25k penalty is real.')">What is Form 5472?</button></div>
+      <div class="nav"><button class="btn btn-ghost" onclick="alert('Demo prototype. This would link to the article: Canada departure tax, explained: what gets deemed sold and what does not.')">What is departure tax?</button></div>
     </section>
 
     <!-- QUESTIONS (injected) -->
@@ -189,139 +205,191 @@
       <h2 id="qTitle"></h2>
       <div class="why" id="qWhy"></div>
       <div class="answers" id="qAnswers"></div>
+      <div class="continue" id="qContinue" style="display:none">
+        <button class="btn btn-primary" id="continueBtn" onclick="multiContinue()">Continue <span class="arr">→</span></button>
+      </div>
       <div class="nav"><button class="btn btn-ghost" onclick="goBack()">← Back</button></div>
     </section>
 
     <!-- RESULT -->
     <section class="screen" id="s-result">
       <div class="verdict">
-        <div class="kicker">Your result</div>
+        <div class="kicker">Your exposure band</div>
         <div id="rBadge"></div>
         <h2 id="rTitle"></h2>
         <p class="vdesc" id="rDesc"></p>
         <div class="recap" id="rRecap"></div>
       </div>
+      <div class="card" id="rAssets"></div>
       <div class="card" id="rCard"></div>
       <div class="answers" style="margin-top:14px">
         <button class="btn btn-primary" id="rCta"></button>
       </div>
       <div class="gate" id="gate">
-        <h3>Get the 5472 fact sheet</h3>
-        <p>Your result stays free. Enter your email only if you want the plain-English PDF: deadlines, what counts as a reportable transaction, and the options if years were missed.</p>
-        <input type="email" id="email" placeholder="you@company.com" inputmode="email" autocomplete="email">
-        <button class="btn btn-primary" onclick="capture()">Email me the fact sheet <span class="arr">↗</span></button>
-        <div class="ok" id="gateOk">✓ Demo: in production this posts to your CRM webhook and triggers the PDF email.</div>
+        <h3>Get the Leaving-Canada checklist</h3>
+        <p>Your result stays free. Enter your email only if you want the timeline-ordered PDF: six months out, departure day, and the first non-resident return, including T1161, T1243 and the T1244 deferral election.</p>
+        <input type="email" id="email" placeholder="you@example.com" inputmode="email" autocomplete="email">
+        <button class="btn btn-primary" onclick="capture()">Email me the checklist <span class="arr">↗</span></button>
+        <div class="ok" id="gateOk">✓ Demo: in production this posts to your CRM webhook with band + asset tags and triggers the PDF email.</div>
       </div>
       <div class="restart"><button class="btn btn-ghost" onclick="restart()">↺ Start over</button></div>
-      <p class="disclaimer">This is general guidance based on your answers, not tax or legal advice. Your facts decide your outcome. That's what a review is for. Decision logic reviewed and approved by Rothbard Group's Enrolled Agents (June 2026). Penalty per IRC §6038A(d) and Form 5472 Instructions (Rev. Dec 2024).</p>
+      <p class="disclaimer">This is general guidance based on your answers, not tax or legal advice. Your facts decide your outcome. That's what a calculation is for. Per-asset classifications reviewed and approved by Rothbard Group's Enrolled Agents (June 2026). References: ITA s.128.1; CRA "Dispositions of property for emigrants"; Forms T1161, T1243, T1244; Guide T4145.</p>
     </section>
 
-    <footer>Rothbard Group · Cross-Border Tax &amp; Corporate Advisory · Prototype v0.5</footer>
+    <footer>Rothbard Group · Cross-Border Tax &amp; Corporate Advisory · Prototype v0.1</footer>
     </div>
   </div>
 </div>
 
 <script>
-const QUESTIONS = [
-  {
-    id:"company", n:"01", kicker:"Question 1 of 6", title:"Do you have a company formed in the US?",
-    why:"<b>Why we ask:</b> Form 5472 only attaches to US entities (and certain foreign corporations with US business).",
-    answers:[
-      {v:"llc", t:"Yes, an LLC"},
-      {v:"corp", t:"Yes, a corporation (Inc.)"},
-      {v:"no", t:"No US company", s:"We'll point you somewhere more useful"}
-    ]
-  },
-  {
-    id:"foreign", n:"02", kicker:"Question 2 of 6", title:"Is any owner a non-US person?",
-    why:"<b>Why we ask:</b> 5472 is about foreign ownership. “Non-US person” means not a citizen, green-card holder or US tax resident.",
-    answers:[
-      {v:"yes", t:"Yes"},
-      {v:"no", t:"No, all owners are US persons"},
-      {v:"unsure", t:"Not sure", s:"e.g., mixed ownership or a holding company in between"}
-    ]
-  },
-  {
-    id:"pct", n:"03", kicker:"Question 3 of 6", title:"How much does the non-US person own?",
-    why:"<b>Why we ask:</b> The trigger is 25%+ owned, directly <i>or indirectly</i>. Ownership through other companies or family attribution counts. <i>Heard 10% somewhere? That's the other form (Form 5471, for US persons owning foreign companies). This check is the reverse direction.</i>",
-    answers:[
-      {v:"p25", t:"25% or more"},
-      {v:"under", t:"Less than 25%"},
-      {v:"unsure", t:"Not sure", s:"Indirect and attributed ownership make this genuinely tricky"}
-    ]
-  },
-  {
-    id:"class", n:"04", kicker:"Question 4 of 6", title:"How is the company taxed?",
-    why:"<b>Why we ask:</b> A single-member LLC with no election is “disregarded”, and foreign-owned disregarded entities have their own 5472 duty (filed with a pro-forma 1120).",
-    answers:[
-      {v:"de", t:"Single-member LLC, no election", s:"“Disregarded entity”, the most common setup"},
-      {v:"pship", t:"Partnership (multi-member LLC)", s:"Two or more members, no corporate election filed"},
-      {v:"ccorp", t:"C-corporation"},
-      {v:"scorp", t:"S-corporation"},
-      {v:"unknown", t:"I don't know"}
-    ]
-  },
-  {
-    id:"trans", n:"05", kicker:"Question 5 of 6", title:"Did ANY money or property move between you and the company this year?",
-    why:"<b>Why we ask:</b> “Reportable transactions” are broader than people think. For foreign-owned disregarded entities they expressly include putting your own money in, taking it out, loans, and even paying formation costs.",
-    answers:[
-      {v:"yes", t:"Yes", s:"Including my own capital contributions or paying its costs"},
-      {v:"no", t:"No, completely dormant, nothing moved"},
-      {v:"unsure", t:"Not sure"}
-    ]
-  },
-  {
-    id:"history", n:"06", kicker:"Question 6 of 6", title:"Have you filed Form 5472 for every year since formation?",
-    why:"<b>Why we ask:</b> Missed years change the next step. There are established ways to come into compliance, and timing matters.",
-    answers:[
-      {v:"every", t:"Yes, every year"},
-      {v:"some", t:"Some years"},
-      {v:"never", t:"Never"},
-      {v:"unknown", t:"I didn't know it existed"}
-    ]
-  }
-];
-const QLABEL = {company:"US company",foreign:"Foreign owner",pct:"Ownership",class:"Taxed as",trans:"Transactions",history:"Filing history"};
+/* ---------- asset definitions (classifications pending EA sign-off) ---------- */
+const ASSETS = {
+  nonreg:{label:"Non-registered investments", tag:"hit", tagText:"Deemed sold",
+    note:"Stocks, funds and bonds in taxable accounts are deemed disposed at fair market value on your departure date. Reported on T1243."},
+  crypto:{label:"Crypto", tag:"hit", tagText:"Deemed sold",
+    note:"Treated like other capital property: deemed disposed on departure at fair market value, whether or not you sell."},
+  ccpc:{label:"Private company shares (CCPC)", tag:"hit", tagText:"Deemed sold",
+    note:"Deemed disposed on departure, and valuation is rarely simple. This is the asset class where planning moves the most money."},
+  rental:{label:"Rental property in Canada", tag:"safe", tagText:"Excluded",
+    note:"Canadian real estate is taxable Canadian property: excluded from the deemed disposition, but it has its own rules on rents and on a later sale."},
+  home:{label:"Principal home", tag:"dep", tagText:"Depends",
+    note:"Also taxable Canadian property, so no deemed sale on departure. The principal-residence exemption and what you do with it after leaving decide the outcome."},
+  rrsp:{label:"RRSP / RRIF", tag:"safe", tagText:"Excluded",
+    note:"Outside the deemed disposition. Withdrawals as a non-resident face Part XIII withholding (25% default absent a treaty); a s.217 election can sometimes produce a refund."},
+  tfsa:{label:"TFSA", tag:"safe", tagText:"Excluded",
+    note:"Keepable as a non-resident and stays Canadian-tax-exempt, but contributions made while non-resident are penalized, and your new country may tax it."},
+  pension:{label:"Pension (CPP/QPP, employer)", tag:"dep", tagText:"Depends",
+    note:"No deemed disposition. Payments to a non-resident face Part XIII withholding; rates and the s.217 election depend on your destination. Panama has no tax treaty with Canada."},
+};
+const TAXABLE = ["nonreg","crypto","ccpc"]; // gain-band questions only for deemed-disposition assets
 
-let answers = {};
-let labels = {};
+const GAIN_ANSWERS = [
+  {v:"lt25", t:"Under $25,000"},
+  {v:"b25_100", t:"$25,000 to $100,000"},
+  {v:"b100_500", t:"$100,000 to $500,000"},
+  {v:"gt500", t:"Over $500,000"},
+  {v:"unsure", t:"Not sure", s:"Common and fine. We band it conservatively."}
+];
+
+const PROVINCES = ["Alberta","British Columbia","Manitoba","New Brunswick","Newfoundland and Labrador","Northwest Territories","Nova Scotia","Nunavut","Ontario","Prince Edward Island","Quebec","Saskatchewan","Yukon","Prefer not to say"];
+
+/* ---------- state ---------- */
+let answers = {};   // qid -> value (assets: array)
+let labels = {};    // qid -> display label
 let path = [];
 let currentQ = null;
+let multiSel = new Set();
 
 const $ = id => document.getElementById(id);
+
+/* ---------- step engine: ordered, dynamic ---------- */
+function stepList(){
+  const steps = ["status","window","assets"];
+  (answers.assets||[]).forEach(a=>{ if(TAXABLE.includes(a)) steps.push("gain_"+a); });
+  steps.push("fmv","spouse","province");
+  return steps;
+}
+function totalSteps(){
+  // before assets are chosen, assume no gain steps yet; recompute live
+  return stepList().length;
+}
+function nextQuestionId(){
+  const steps = stepList();
+  for(const s of steps){ if(!(s in answers)) return s; }
+  return null;
+}
+
+function buildQuestion(qid){
+  const stepNum = path.length + 1;
+  const tot = totalSteps();
+  const k = `Question ${stepNum} of ${tot}`;
+  if(qid==="status") return {id:qid, n:"01", kicker:k, title:"Where are you in the move?",
+    why:"<b>Why we ask:</b> Departure tax crystallizes on the day you become a non-resident. Before that day it's planning; after it, it's filing.",
+    answers:[
+      {v:"planning", t:"Canadian tax resident, planning to leave"},
+      {v:"left", t:"Already left, within the last 2 years", s:"Departure-year forms may already be due"},
+      {v:"exploring", t:"Just exploring"}
+    ]};
+  if(qid==="window") return {id:qid, n:"02", kicker:k, title:"When do you plan to go?",
+    why:"<b>Why we ask:</b> Most departure-tax planning levers (timing gains, elections, the departure date itself) only work before you leave.",
+    answers:[
+      {v:"lt6", t:"Within 6 months"},
+      {v:"m6_18", t:"6 to 18 months"},
+      {v:"gt18", t:"18+ months", s:"The best position to plan from"}
+    ]};
+  if(qid==="assets") return {id:qid, n:"03", kicker:k, title:"Which of these do you own?", multi:true,
+    why:"<b>Why we ask:</b> The deemed disposition catches some asset classes and excludes others. Select all that apply.",
+    answers:Object.keys(ASSETS).map(key=>({v:key, t:ASSETS[key].label}))};
+  if(qid.startsWith("gain_")){
+    const a = qid.slice(5);
+    return {id:qid, n:String(stepNum).padStart(2,"0"), kicker:k, title:`Roughly how much unrealized gain in your ${ASSETS[a].label.toLowerCase()}?`,
+      why:"<b>Why we ask:</b> Gain, not value, drives the tax. Bands are enough here; the exact number needs a calculation, not a quiz.",
+      answers:GAIN_ANSWERS};
+  }
+  if(qid==="fmv") return {id:qid, n:String(stepNum).padStart(2,"0"), kicker:k, title:"On departure day, would everything you own add up to more than $25,000?",
+    why:"<b>Why we ask:</b> Above $25,000 total fair market value, the CRA requires Form T1161, a list of your properties, with your departure-year return. Missing it has its own penalty.",
+    answers:[
+      {v:"yes", t:"Yes, over $25,000"},
+      {v:"no", t:"No, under $25,000"},
+      {v:"unsure", t:"Not sure"}
+    ]};
+  if(qid==="spouse") return {id:qid, n:String(stepNum).padStart(2,"0"), kicker:k, title:"Will a spouse, partner or dependants stay in Canada?",
+    why:"<b>Why we ask:</b> Family left behind is a primary residential tie. It can change your departure date, or mean you haven't actually left for tax purposes.",
+    answers:[
+      {v:"no", t:"No"},
+      {v:"yes", t:"Yes"},
+      {v:"complicated", t:"It's complicated", s:"Split households, back-and-forth plans"}
+    ]};
+  if(qid==="province") return {id:qid, n:String(stepNum).padStart(2,"0"), kicker:k, title:"Which province or territory do you live in?", select:true,
+    why:"<b>Why we ask:</b> Communication only in this version. No provincial calculation is run.",
+    answers:[]};
+  return null;
+}
+
+const QLABEL = {status:"Status", window:"Window", assets:"Assets", fmv:"T1161 threshold", spouse:"Family ties", province:"Province",
+  gain_nonreg:"Non-registered gain", gain_crypto:"Crypto gain", gain_ccpc:"CCPC gain"};
+
+/* ---------- flow ---------- */
 function show(id){
   document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
   $(id).classList.add('active');
   window.scrollTo({top:0,behavior:'smooth'});
 }
-function start(){ answers={}; labels={}; path=[]; next(); }
+function start(){ answers={}; labels={}; path=[]; multiSel=new Set(); next(); }
 function restart(){ currentQ=null; $('progress').style.opacity=0; $('stepline').style.visibility='hidden'; $('gateOk').style.display='none'; $('email').value=''; show('s-intro'); }
-
-function nextQuestionId(){
-  if(!('company' in answers)) return 'company';
-  if(answers.company==='no') return null;
-  if(!('foreign' in answers)) return 'foreign';
-  if(answers.foreign==='no') return null;
-  if(!('pct' in answers)) return 'pct';
-  if(!('class' in answers)) return 'class';
-  if(answers.class==='pship') return null; /* partnership: not a reporting corporation, no 5472 */
-  if(!('trans' in answers)) return 'trans';
-  if(!('history' in answers)) return 'history';
-  return null;
-}
 
 function next(){
   const qid = nextQuestionId();
   if(qid===null){ currentQ=null; renderResult(); return; }
-  const q = QUESTIONS.find(x=>x.id===qid);
+  const q = buildQuestion(qid);
   path.push(qid);
   renderQ(q);
 }
 
 function pick(q, a, btn){
+  if(q.multi){
+    btn.classList.toggle('picked');
+    if(multiSel.has(a.v)) multiSel.delete(a.v); else multiSel.add(a.v);
+    $('continueBtn').disabled = false; // allow "none of these" to continue too
+    return;
+  }
   document.querySelectorAll('#qAnswers .ans').forEach(x=>x.classList.remove('picked'));
   btn.classList.add('picked');
   setTimeout(()=>{ answers[q.id]=a.v; labels[q.id]=a.t; next(); }, 300);
+}
+
+function multiContinue(){
+  const sel = Array.from(multiSel);
+  answers.assets = sel;
+  labels.assets = sel.length ? sel.map(k=>ASSETS[k].label).join(", ") : "None of these";
+  multiSel = new Set();
+  next();
+}
+
+function provContinue(){
+  const v = document.querySelector('select.prov').value;
+  answers.province = v; labels.province = v;
+  next();
 }
 
 function renderQ(q){
@@ -330,20 +398,36 @@ function renderQ(q){
   $('qTitle').textContent = q.title;
   $('qWhy').innerHTML = q.why;
   const box = $('qAnswers'); box.innerHTML='';
-  q.answers.forEach((a,i)=>{
+  $('qContinue').style.display = q.multi ? 'block' : 'none';
+
+  if(q.select){
+    const sel = document.createElement('select');
+    sel.className='prov';
+    PROVINCES.forEach(p=>{ const o=document.createElement('option'); o.value=p; o.textContent=p; sel.appendChild(o); });
+    box.appendChild(sel);
     const btn = document.createElement('button');
-    btn.className='ans';
-    btn.style.animation = `in .5s cubic-bezier(.22,.6,.25,1) ${.06*(i+1)}s both`;
-    btn.innerHTML = `<span class="dot"></span><span>${a.t}${a.s?`<small>${a.s}</small>`:''}</span><span class="key">${i+1}</span>`;
-    btn.onclick = ()=>pick(q, a, btn);
+    btn.className='btn btn-primary'; btn.style.marginTop='18px';
+    btn.innerHTML='See my result <span class="arr">→</span>';
+    btn.onclick=provContinue;
     box.appendChild(btn);
-  });
+  } else {
+    q.answers.forEach((a,i)=>{
+      const btn = document.createElement('button');
+      btn.className='ans'+(q.multi?' multi':'');
+      btn.style.animation = `in .5s cubic-bezier(.22,.6,.25,1) ${.05*(i+1)}s both`;
+      btn.innerHTML = `<span class="dot"></span><span>${a.t}${a.s?`<small>${a.s}</small>`:''}</span><span class="key">${i+1}</span>`;
+      btn.onclick = ()=>pick(q, a, btn);
+      box.appendChild(btn);
+    });
+  }
+
   const stepNum = path.length;
+  const tot = totalSteps();
   $('stepline').style.visibility='visible';
   $('progress').style.opacity=1;
-  $('stepLabel').textContent = `Step ${stepNum} of 6`;
-  $('stepPct').textContent = Math.round(stepNum/6*100)+'%';
-  $('bar').style.width = (stepNum/6*100)+'%';
+  $('stepLabel').textContent = `Step ${stepNum} of ${tot}`;
+  $('stepPct').textContent = Math.round(stepNum/tot*100)+'%';
+  $('bar').style.width = (stepNum/tot*100)+'%';
   show('s-q');
   $('s-q').style.animation='none'; $('s-q').offsetHeight; $('s-q').style.animation='';
 }
@@ -354,85 +438,99 @@ function goBack(){
   delete answers[last]; delete labels[last];
   const prev = path.pop();
   delete answers[prev]; delete labels[prev];
+  multiSel = new Set(prev==='assets' ? [] : multiSel);
   next();
 }
 
-/* keyboard: 1-9 selects answer, Enter starts, Backspace goes back */
+/* keyboard: numbers select/toggle, Enter starts or continues, Backspace goes back */
 document.addEventListener('keydown', e=>{
-  if(e.target.tagName==='INPUT') return;
+  if(e.target.tagName==='INPUT' || e.target.tagName==='SELECT') return;
   if($('s-intro').classList.contains('active') && e.key==='Enter'){ start(); return; }
   if(!$('s-q').classList.contains('active') || !currentQ) return;
   if(e.key==='Backspace'){ e.preventDefault(); goBack(); return; }
+  if(e.key==='Enter' && currentQ.multi){ multiContinue(); return; }
   const n = parseInt(e.key,10);
   if(n>=1 && n<=currentQ.answers.length){
     const btn = document.querySelectorAll('#qAnswers .ans')[n-1];
-    pick(currentQ, currentQ.answers[n-1], btn);
+    if(btn) pick(currentQ, currentQ.answers[n-1], btn);
   }
 });
 
-function computeVerdict(){
+/* ---------- verdict ---------- */
+function computeBand(){
   const a = answers;
-  if(a.company==='no') return V.nocompany;
-  if(a.foreign==='no') return V.notreq_us;
-  const unsureCount = ['foreign','pct','trans'].filter(k=>a[k]==='unsure').length + (a.class==='unknown'?1:0);
-  if(a.class==='scorp') return V.depends_scorp;
-  if(a.class==='pship') return V.notreq_pship;
-  const isDE = a.class==='de';
-  if(a.pct==='under' && !isDE) return V.notreq_25;
-  if(unsureCount>=1) return V.depends;
-  if(a.trans==='no') return V.depends_dormant;
-  if(a.history==='every') return V.req_current;
-  return V.req_missed;
+  const sel = a.assets||[];
+  const gains = TAXABLE.filter(t=>sel.includes(t)).map(t=>a["gain_"+t]);
+  const anyBig = gains.includes("gt500");
+  const anyMid = gains.some(g=>g==="b25_100"||g==="b100_500");
+  const anyUnsure = gains.includes("unsure");
+  const familyFlag = a.spouse==="yes"||a.spouse==="complicated";
+  if(anyBig || sel.includes("ccpc") || familyFlag) return "complex";
+  if(anyMid || anyUnsure) return "material";
+  return "minimal";
 }
 
-const V = {
-  nocompany:{badge:['navy','For someone else'],title:"Form 5472 isn't your form",
-    desc:"Without a US entity, the 5472 question doesn't arise for you. But if you're operating cross-border, other exposure might be. That's worth 3 minutes.",
-    items:["No US entity means no 5472 reporting-corporation status","If you own a foreign company as a US person, Form 5471 is the one to ask about","Cross-border structures have their own checklist. See the Readiness Score"],
-    cta:"Take the Cross-Border Readiness Score"},
-  notreq_us:{badge:['green','Likely not required'],title:"5472 likely doesn't apply. Here's what might",
-    desc:"With all-US ownership, the foreign-ownership trigger isn't met on these answers. Depending on your situation, other filings can still apply.",
-    items:["Form 5472 targets 25%+ foreign-owned US entities. Not yours, per your answers","If you own foreign companies or accounts: 5471, FBAR or 8938 may apply instead","Worth re-checking after any ownership change"],
-    cta:"Take the Cross-Border Readiness Score"},
-  notreq_pship:{badge:['green','Likely not required'],title:"Taxed as a partnership, so 5472 is not your form",
-    desc:"Form 5472 attaches to reporting corporations: 25%+ foreign-owned US corporations and foreign-owned disregarded entities. A multi-member LLC that has not elected corporate taxation is a partnership, and a partnership is not a reporting corporation. Different filings apply instead.",
-    items:["Your lane is the partnership one: Form 1065 with Schedules K-1, plus K-2/K-3 for international items","US income allocable to foreign partners can trigger Section 1446 withholding (Forms 8804/8805). That's the trap in this lane","If the LLC ever files Form 8832 to be taxed as a corporation, the 5472 duty switches on. Re-check after any election"],
-    cta:"Book a partnership compliance check"},
-  notreq_25:{badge:['green','Likely not required'],title:"Below the 25% line, and probably out of scope",
-    desc:"On your answers the 25% foreign-ownership trigger isn't met. One honest caveat: indirect and family-attributed ownership counts, and it catches people.",
-    items:["The threshold is 25%+ held directly OR indirectly by a foreign person","Holding companies, spouses and family attribution can push you over without realizing","If ownership is layered, a 15-minute scoping call settles it"],
-    cta:"Book a 15-minute scoping call"},
-  depends:{badge:['amber','It depends'],title:"Yours is exactly the profile the internet gets wrong",
-    desc:"One or more of your answers ('not sure') sits on the exact lines (ownership attribution, entity classification) where confident online answers are wrong in both directions.",
-    items:["Indirect/attributed ownership decides the 25% test, not just what's on paper","Entity classification (disregarded vs partnership vs corporation) changes which rules apply","This is a 15-minute determination with the right documents in hand"],
-    cta:"Book a 15-minute scoping call"},
-  depends_scorp:{badge:['amber','Needs attention'],title:"An S-corporation with foreign ownership is its own issue",
-    desc:"S-corporation eligibility rules around non-US shareholders are strict, and a foot fault there is a bigger problem than Form 5472. This needs a person, not a quiz.",
-    items:["S-corp shareholder eligibility rules are unforgiving: status can be invalidated","If the election fails, the entity's whole tax treatment changes retroactively","Priority review recommended before anything else is filed"],
-    cta:"Book a priority consult"},
-  depends_dormant:{badge:['amber','Close call'],title:"“Nothing moved” is rarer than people think",
-    desc:"Truly zero transactions can mean no 5472 for the year. But for foreign-owned disregarded entities, formation costs, capital you put in and expenses you covered all count. Most 'dormant' companies aren't.",
-    items:["Formation-year filings are the classic miss: paying the formation fee counts","Covering the LLC's costs from personal funds is a reportable transaction","If genuinely nothing ever moved, document it and re-check annually"],
-    cta:"Book a 15-minute scoping call"},
-  req_current:{badge:['green','Likely required, and handled'],title:"The duty likely applies, and you appear on top of it",
-    desc:"On these answers the filing obligation likely applies, and you're filing. Good. Three things still catch current filers:",
-    items:["Completeness: every related-party transaction category, not just the obvious ones","The pro-forma 1120 wrapper and its deadline (incl. extensions) each year","Ownership or classification changes mid-year change the filing. Flag them early"],
-    cta:"Book an annual compliance check"},
-  req_missed:{badge:['red','Likely required: missed years'],title:"Filings were likely missed. Fixable, if you act before the IRS does.",
-    desc:"Your answers suggest Form 5472 obligations in years that weren't filed. The penalty is real: $25,000 per form per year, plus another $25,000 per 30 days if unresolved 90 days after IRS notice. But there are established ways to come into compliance, and acting before the IRS contacts you matters.",
-    items:["Don't rush a bare late filing. The right sequencing affects penalty exposure","Reasonable-cause and compliance procedures exist; eligibility depends on your facts","Bring: formation docs, ownership history, and what moved in/out each year"],
-    cta:"Book a priority compliance consult"},
+const BANDS = {
+  minimal:{badge:['green','Minimal exposure'], title:"Your departure-tax exposure looks limited. The forms still matter.",
+    desc:"On these answers, the deemed disposition either doesn't reach your assets or the gains involved are small. The paperwork is still real: filing errors at this level are cheap to prevent and expensive to fix.",
+    items:[
+      "T1161 (the property list) is required if your total property exceeds $25,000 on departure, even when no tax is owed",
+      "Your departure date drives everything: document it and the ties you cut",
+      "Re-run this check if your assets or family plans change before you leave"
+    ],
+    cta:"Get the pre-departure checklist", ctaGate:true},
+  material:{badge:['amber','Material exposure'], title:"You likely have a real departure-tax event.",
+    desc:"The good news: timing and elections can change the number. Gains can be staged, the departure date itself is a lever, and the T1244 election can defer paying the departure tax until you actually sell.",
+    items:[
+      "T1243 reports the deemed disposition; T1161 lists your property. Both ride with the departure-year return",
+      "The T1244 election defers payment until actual sale (security may be required over a threshold)",
+      "Panama has no tax treaty with Canada: the Part XIII default of 25% applies to RRSP and pension payments, with the s.217 election as the relief valve",
+      "Pre-departure timing of sales and contributions is where most of the savings live"
+    ],
+    cta:"Book a pre-departure review", ctaGate:false},
+  complex:{badge:['red','Six-figure / complex'], title:"This needs a calculation, not an estimate.",
+    desc:"Your profile combines the factors where planning moves six-figure outcomes: large unrealized gains, private company shares, or family ties that can change your departure date itself. Confident generic answers are how the expensive mistakes in this space happen.",
+    items:[
+      "CCPC shares are deemed disposed and valuation drives the bill: this alone justifies professional sequencing",
+      "Family remaining in Canada is a primary residential tie: your departure date, and thus the whole calculation, may not be what you think",
+      "The T1244 deferral, security arrangements, and gain staging interact: order of operations matters",
+      "Get the sequencing reviewed before you book the flight, not after"
+    ],
+    cta:"Book a priority consult", ctaGate:false},
 };
 
 function renderResult(){
-  const v = computeVerdict();
+  const band = computeBand();
+  const v = BANDS[band];
+  const a = answers;
   $('rBadge').innerHTML = `<span class="badge ${v.badge[0]}">${v.badge[1]}</span>`;
   $('rTitle').textContent = v.title;
   $('rDesc').textContent = v.desc;
-  $('rRecap').innerHTML = Object.keys(labels).map(k=>`<span>${QLABEL[k]}: ${labels[k]}</span>`).join('');
-  $('rCard').innerHTML = `<h3>What this means for you</h3><ul>${v.items.map(i=>`<li>${i}</li>`).join('')}</ul><p class="ref">References: IRC §6038A; Form 5472 Instructions (Rev. Dec 2024), irs.gov. Logic EA-reviewed, June 2026.</p>`;
+  $('rRecap').innerHTML = Object.keys(labels).map(k=>`<span>${QLABEL[k]||k}: ${labels[k]}</span>`).join('');
+
+  // per-asset verdicts
+  const sel = a.assets||[];
+  if(sel.length){
+    $('rAssets').style.display='block';
+    $('rAssets').innerHTML = `<h3>Your assets, one by one</h3>` + sel.map(k=>{
+      const A = ASSETS[k];
+      return `<div class="assetrow"><span class="tag ${A.tag}">${A.tagText}</span><span><b>${A.label}</b><p>${A.note}</p></span></div>`;
+    }).join('') + `<p class="ref">Classifications per ITA s.128.1 excluded-property rules and CRA emigrant guidance. One nuance worth knowing: if you were a Canadian resident for 60 months or less in the 10 years before leaving, property you owned when you arrived (or inherited since) may be exempt entirely. Raise it in any review. Classifications EA-reviewed, June 2026.</p>`;
+  } else {
+    $('rAssets').style.display='none';
+  }
+
+  // next-steps card, with status-aware first line
+  let items = v.items.slice();
+  if(a.status==="left"){
+    items.unshift("You've already departed: T1161 and T1243 are due with your departure-year return. If that deadline has passed, address it before the CRA raises it");
+  }
+  $('rCard').innerHTML = `<h3>What this means for you</h3><ul>${items.map(i=>`<li>${i}</li>`).join('')}</ul><p class="ref">References: ITA s.128.1, s.220(4.5); CRA Forms T1161, T1243, T1244; Guide T4145 (s.217 election). No dollar estimate is shown on purpose: bands are honest, numbers without your facts are not.</p>`;
+
   $('rCta').innerHTML = v.cta + ' <span class="arr">↗</span>';
-  $('rCta').onclick = ()=>alert('Demo prototype. This routes to the matching booking page / application form with your verdict pre-tagged.');
+  $('rCta').onclick = v.ctaGate
+    ? ()=>{ $('gate').scrollIntoView({behavior:'smooth'}); $('email').focus(); }
+    : ()=>alert('Demo prototype. This routes to the matching booking page with your band + asset tags attached.');
   $('bar').style.width='100%'; $('stepPct').textContent='100%'; $('stepLabel').textContent='Complete';
   show('s-result');
 }
