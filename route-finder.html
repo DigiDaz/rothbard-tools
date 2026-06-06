@@ -219,7 +219,8 @@ function highCapital(){ return ["c100","c200","c300"].includes(answers.capital);
 function pensionadoLocked(){ return answers.income==="inc1000"; }
 
 function stepList(){
-  const s=["passport","who","income","capital"];
+  if(answers.italian==="yes") return ["italian"];
+  const s=["italian","passport","who","income","capital"];
   if(highCapital()) s.push("form");
   if(!pensionadoLocked()) s.push("work");
   s.push("priority","timeline");
@@ -233,6 +234,12 @@ function nextQuestionId(){
 
 function buildQuestion(qid){
   const num=path.length+1, n=String(num).padStart(2,"0"), kicker=`Question ${num} of ${totalSteps()}`;
+  if(qid==="italian") return {id:qid,n,kicker,title:"Are you an Italian citizen?",
+    why:"<b>Why we ask:</b> Italy and Panama have a bilateral treaty that gives Italian citizens a uniquely fast, low-cost residency route open to no other nationality. If it applies to you it is almost always the answer, so we check it first.",
+    answers:[
+      {v:"yes",t:"Yes, I hold Italian citizenship"},
+      {v:"no",t:"No"}
+    ]};
   if(qid==="passport") return {id:qid,n,kicker,title:"Is your passport from a Friendly Nations country?",
     why:"<b>Why we ask:</b> The Friendly Nations Visa is only open to ~50 nationalities. The official list changes, so we flag it either way.",
     answers:[
@@ -285,7 +292,7 @@ function buildQuestion(qid){
   if(qid==="priority") return {id:qid,n,kicker,title:"What matters most to you?",
     why:"<b>Why we ask:</b> When two routes fit, this breaks the tie.",
     answers:[
-      {v:"cost",t:"Lowest cost"},
+      {v:"cost",t:"Lowest cost",s:"Lower government fees, even if the path is slower"},
       {v:"speed",t:"Fastest approval"},
       {v:"citizenship",t:"Path to citizenship"},
       {v:"simple",t:"Simplest process"}
@@ -299,7 +306,7 @@ function buildQuestion(qid){
     ]};
   return null;
 }
-const QLABEL={passport:"Friendly Nations",who:"Moving",income:"Lifetime income",capital:"Capital",form:"Capital form",work:"Employment",priority:"Priority",timeline:"Timeline"};
+const QLABEL={italian:"Italian citizen",passport:"Friendly Nations",who:"Moving",income:"Lifetime income",capital:"Capital",form:"Capital form",work:"Employment",priority:"Priority",timeline:"Timeline"};
 
 function show(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));$(id).classList.add('active');window.scrollTo({top:0,behavior:'smooth'});}
 function start(){answers={};labels={};path=[];next();}
@@ -358,38 +365,44 @@ document.addEventListener('keydown',e=>{
 function fnvOk(){ return answers.passport==="yes"||answers.passport==="unsure"; }
 function computeRoute(){
   const a=answers;
-  const cap200=["c200","c300"].includes(a.capital);
+  if(a.italian==="yes") return ["italy",null];
   const cap300=a.capital==="c300";
+  const cap200=["c200","c300"].includes(a.capital);
   const cap100=["c100","c200","c300"].includes(a.capital);
-
+  const friendly=fnvOk();
+  const wantsLowFees=a.priority==="cost";
   if(a.income==="inc1000"){
-    let runner=null;
-    if(fnvOk()&&cap200) runner=["FNV deposit or property route","you qualify on capital too, but Pensionado costs far less to hold"];
-    else if(cap300) runner=["Qualified Investor","faster track, but it parks far more capital than the Pensionado needs"];
-    return ["pensionado",runner];
-  }
-  if(a.income==="inc750"&&cap100){
-    const runner = (fnvOk()&&cap200)
-      ? ["FNV deposit or property route","it needs $200k committed vs $100k in property here"]
-      : (cap300 ? ["Qualified Investor","open to all passports, but parks far more capital"] : null);
-    return ["pensionado_prop",runner];
-  }
-  if(fnvOk()&&cap200){
-    const r = (a.form==="deposit") ? "fnv_deposit" : (a.form==="investment"&&cap300) ? "qiv" : "fnv_property";
-    if(r==="qiv") return ["qiv",["FNV property or deposit route","lower threshold, but a slower path than Qualified Investor"]];
-    const other = r==="fnv_deposit" ? ["FNV property route","same threshold, but your money sits in a bank instead of a title"] : ["FNV deposit route","same threshold; property won the tie on your preference"];
-    return [r,other];
+    return ["pensionado", cap300?["the Qualified Investor visa","faster, and it grants an immediate Panama passport, but higher fees and far more capital parked"]:null];
   }
   if(cap300){
-    return ["qiv",[fnvOk()?"FNV routes":"a consult on family or employment paths","Qualified Investor is open to any nationality and built for speed"]];
+    if(wantsLowFees){
+      if(friendly){ const r=a.form==="deposit"?"fnv_deposit":"fnv_property"; return [r,["the Qualified Investor visa","faster and grants an immediate passport, but far higher government fees"]]; }
+      return ["economic_solvency",["the Qualified Investor visa","same $300k in real estate, but higher fees in exchange for an immediate passport and permanent residence"]];
+    }
+    return ["qiv", friendly?["a Friendly Nations route","lower fees, if you would accept a slower path and no immediate passport"]:["the Economic Solvency visa","the lower-fee alternative if you would trade the immediate passport for a slower, cheaper path"]];
   }
-  if(fnvOk()&&(a.work==="yes"||a.work==="maybe")){
-    return ["fnv_employment",["building toward the FNV deposit route","if genuine employment isn't realistic, capital routes reopen later"]];
+  if(a.income==="inc750"&&cap100){ return ["pensionado_prop",null]; }
+  if(friendly&&cap200){
+    const r=a.form==="deposit"?"fnv_deposit":"fnv_property";
+    const other = r==="fnv_deposit" ? ["the FNV property route","same threshold, capital in a title instead of a bank"] : ["the FNV deposit route","same threshold, capital parked in a bank instead of a title"];
+    return [r,other];
   }
+  if(friendly&&(a.work==="yes"||a.work==="maybe")){ return ["fnv_employment",["building toward the FNV deposit route","if genuine employment is not realistic, capital routes reopen later"]]; }
   return ["other",null];
 }
-
 const ROUTES={
+  italy:{badge:['green','Exclusive route'],title:"Italian citizens: the treaty route is yours",
+    desc:"As an Italian citizen you have access to a route no one else does: the special residency visa under the Italy-Panama treaty. It is among the fastest and lowest-cost ways to gain Panamanian residency, and it is open only to Italian nationals.",
+    facts:[["Eligibility","Italian citizens only"],["Basis","Italy-Panama treaty"],["Cost","Among the lowest"],["Capital","Minimal"]],
+    factsRef:"Available only to citizens of Italy under the bilateral Italy-Panama treaty. Current requirements and processing should be confirmed with counsel before filing.",
+    items:["This route is exclusive to Italian citizens: if you hold Italian citizenship it is almost always the cheapest and simplest path","Documentation centres on proving Italian citizenship and a clean record","Confirm current treaty processing and any residency conditions with counsel before you file"],
+    cta:{t6:"Book a priority application consult",t18:"Book an application consult",explore:"Get the Italy treaty visa checklist"}},
+  economic_solvency:{badge:['green','Strong fit'],title:"Economic Solvency: the lower-fee investor route",
+    desc:"The lower-fee alternative for non-Italian, non-Friendly-Nations nationals who can invest but would rather not pay the Qualified Investor's higher government fees. Same $300,000 in real estate, or a $300,000 bank deposit (versus $750,000 for Qualified Investor), with more flexibility. The trade-off: no immediate passport or permanent residence.",
+    facts:[["Real estate","$300k"],["Bank deposit","$300k"],["Govt fees","Lower than QIV"],["Residence","2-yr temporary, then permanent"]],
+    factsRef:"Same real-estate threshold as the Qualified Investor visa, but lower government fees and a smaller deposit option. It does not grant an immediate Panama passport or permanent residence. Thresholds and treatment require confirmation before filing.",
+    items:["Lower government fees than the Qualified Investor visa: that is the main reason to choose it","No immediate passport or permanent residence: two years of temporary residence first, then permanent","The bank-deposit route is $300k here versus $750k for Qualified Investor, which frees up significant capital"],
+    cta:{t6:"Book a priority application consult",t18:"Book an application consult",explore:"Get the Economic Solvency checklist"}},
   pensionado:{badge:['green','Strong fit'],title:"The Pensionado is built for you",
     desc:"Guaranteed lifetime income of $1,000 a month or more is exactly what Panama's most famous program asks for. It is also the cheapest major route to hold: your income qualifies you, no large capital needs parking.",
     facts:[["Income test","$1,000/mo lifetime"],["Per dependant","+$250/mo"],["Capital required","None"],["Famous extras","Retiree discounts"]],
@@ -421,10 +434,10 @@ const ROUTES={
     items:["The employment must be real: payroll, social security registration, actual work","Structures sold online as the 'cheap corporate route' are usually pre-2021 advice or phantom employment; both end badly","This route rewards professional structuring more than any other: get it designed before you commit"],
     cta:{t6:"Book a structuring consult",t18:"Book a structuring consult",explore:"Get the FNV checklist"}},
   qiv:{badge:['green','Strong fit'],title:"Qualified Investor: Panama's fast lane",
-    desc:"Open to any nationality and built for speed. Three doors: $300,000 in real estate (the threshold rises permanently to $500,000 on October 15, 2026), $500,000 in securities through a licensed Panamanian brokerage, or a $750,000 bank deposit. Each held five years.",
-    facts:[["Real estate","$300k until Oct 15, 2026"],["Securities","$500k"],["Deposit","$750k"],["Hold period","5 years"]],
+    desc:"Open to any nationality and built for speed. It is the only route that grants permanent residence, a Panama ID card and a Panama travel document right away, in exchange for higher government fees. Three doors: $300,000 in real estate (the threshold rises permanently to $500,000 on October 15, 2026), $500,000 in securities through a licensed Panamanian brokerage, or a $750,000 bank deposit. Each held five years.",
+    facts:[["Real estate","$300k until Oct 15, 2026"],["Securities","$500k"],["Deposit","$750k"],["Grants","Immediate PR + passport"]],
     factsRef:"Per Executive Decree 722 of 2020 and the announced 2026 step-up [EA-VERIFY before any deadline-based claim is published].",
-    items:["The October 2026 real-estate step-up is the one honest deadline in Panama immigration: if this route fits, sequence around it","Five-year holds are real commitments: structure ownership and exit before buying","Any nationality qualifies: this is the route when the Friendly Nations list says no"],
+    items:["It grants immediate permanent residence, a Panama ID and a Panama travel document; the trade-off is higher government fees than the other routes","The October 2026 real-estate step-up is the one honest deadline in Panama immigration: if this route fits, sequence around it","Five-year holds are real commitments: structure ownership and exit before buying","Any nationality qualifies: this is the route when the Friendly Nations list says no"],
     cta:{t6:"Book a priority application consult",t18:"Book an application consult",explore:"Get the Qualified Investor checklist"}},
   other:{badge:['navy','Talk to us'],title:"Your route needs a person, not a quiz",
     desc:"On these answers, none of the standard routes fits cleanly yet. That is not a dead end: marriage, employment and other categories exist, annuity structures can create Pensionado-qualifying income from savings, and plans change. The right move is a short conversation, not a workaround.",
