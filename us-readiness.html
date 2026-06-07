@@ -211,83 +211,98 @@
 
 <script>
 const DIM_LABEL={A:"Exit tax",B:"Expat compliance",C:"Transition planning",D:"Destination readiness",E:"Structure integrity"};
-const isF1=a=>a.g1==="citizen"||a.g1==="ltgc";
-const isF2=a=>a.g1==="stgc"||a.g1==="spt";
+const isF1=a=>a.g1==="family1";
+const isF2=a=>a.g1==="family2";
 const isUS=a=>isF1(a)||isF2(a);
+const renouncing=a=>isF1(a)&&a.renounce==="yes";
+const staying=a=>isF1(a)&&(a.renounce==="no"||a.renounce==="unsure");
 const QUESTIONS=[
  {id:"g1",dim:null,scored:false,kick:"Your US status",title:"Which best describes your US tax status?",
-  why:"<b>Why we ask:</b> it changes everything that follows. US citizens and long-term green-card holders carry the exit tax; shorter-term residents can leave cleanly.",
+  why:"<b>Why we ask:</b> it splits the whole tool. Citizens and long-term green-card holders carry the exit tax; shorter-term residents can leave cleanly.",
   answers:[
-   {v:"citizen",t:"US citizen"},
-   {v:"ltgc",t:"Green-card holder in 8 or more of the last 15 years",s:"A long-term resident"},
-   {v:"stgc",t:"Green-card holder, fewer than 8 of the last 15 years"},
-   {v:"spt",t:"US tax resident by days present (substantial presence)",s:"Not a citizen or green-card holder"},
-   {v:"none",t:"None of these, or not a US person",gate:true}
+   {v:"family1",t:"US citizen, or long-term green-card holder",s:"A green card in 8 or more of the last 15 years"},
+   {v:"family2",t:"Short-term green-card holder, or US tax resident by substantial presence",s:"By days present in the US"},
+   {v:"none",t:"Neither, or not a US person",gate:true}
   ]},
- {id:"q1",dim:"A",scored:true,visibleIf:isF1,title:"Do you plan to give up your US status (renounce citizenship or abandon your green card)?",
-  why:"<b>Why we ask:</b> giving up US status can trigger the exit tax, a deemed sale of your worldwide assets, if you are a covered expatriate.",
-  answers:[{v:"yes",t:"Yes, planning to",risk:2},{v:"considering",t:"Considering it",risk:1},{v:"no",t:"No, staying a US person",risk:0}]},
- {id:"q2",dim:"A",scored:true,visibleIf:a=>isF1(a)&&(a.q1==="yes"||a.q1==="considering"),title:"Have your worldwide assets been independently valued at fair market value for the exit-tax mark-to-market?",
-  why:"<b>Why we ask:</b> the exit tax is a mark-to-market on your worldwide assets at fair market value on the day you expatriate. An independent valuation is the standard.",
+ {id:"renounce",dim:null,scored:false,visibleIf:isF1,kick:"Your plan",title:"Are you looking to renounce US citizenship or relinquish your green card?",
+  why:"<b>Why we ask:</b> this is the fork. Renouncing brings the exit tax into play. Staying a US person abroad brings worldwide filing obligations instead.",
+  answers:[{v:"yes",t:"Yes, planning to renounce or relinquish"},{v:"no",t:"No, I'll live abroad as a US person"},{v:"unsure",t:"Not sure yet"}]},
+ {id:"ex_fmv",dim:"A",scored:true,visibleIf:renouncing,title:"Have your worldwide assets been independently valued at fair market value for the exit-tax mark-to-market?",
+  why:"<b>Why we ask:</b> the exit tax is a deemed sale of your worldwide assets at fair market value on the day you expatriate. An independent appraisal is the standard.",
   answers:[{v:"appraisal",t:"Yes, an independent appraisal",risk:0},{v:"rough",t:"A rough estimate only",risk:2},{v:"no",t:"No",risk:3}]},
- {id:"q3",dim:"A",scored:true,visibleIf:a=>isF1(a)&&(a.q1==="yes"||a.q1==="considering"),title:"Are you across the covered-expatriate tests (net worth $2M+, the average tax-liability test, and the 5-year certification on Form 8854)?",
+ {id:"ex_covered",dim:"A",scored:true,visibleIf:renouncing,title:"Are you across the covered-expatriate tests (net worth $2M+, the average tax-liability test, and the 5-year certification on Form 8854)?",
   why:"<b>Why we ask:</b> these tests decide whether the exit tax applies to you at all.",
   answers:[{v:"yes",t:"Yes, planned for it",risk:0},{v:"heard",t:"Heard of it",risk:2},{v:"no",t:"No",risk:3}]},
- {id:"q4",dim:"B",scored:true,visibleIf:isF1,title:"As a US person abroad, how across are you of the filings that still follow you?",
-  why:"<b>Why we ask:</b> US citizens and long-term green-card holders are taxed on worldwide income wherever they live. FBAR, FATCA (8938), the foreign earned income exclusion (2555), Form 5471, GILTI and PFIC can all apply.",
-  answers:[{v:"full",t:"Fully, with advisers",risk:0},{v:"some",t:"Some of it",risk:2},{v:"new",t:"No, this is new to me",risk:3}]},
- {id:"q5",dim:"C",scored:true,visibleIf:isF2,title:"Have you planned how your business is taxed once you are no longer a US resident?",
-  why:"<b>Why we ask:</b> a US business does not automatically become tax-free when you leave. Without restructuring, it can stay inside the US net.",
-  answers:[{v:"yes",t:"Yes, structured for it",risk:0},{v:"started",t:"Started",risk:1},{v:"no",t:"No",risk:3},{v:"nobiz",t:"No business",risk:0}]},
- {id:"q6",dim:"C",scored:true,visibleIf:isF2,title:"Do you have a plan to keep your US banking and brokerage after you leave?",
+ {id:"c_feie",dim:"B",scored:true,visibleIf:staying,title:"Are you set up to use the foreign earned income exclusion (Form 2555) where it applies?",
+  why:"<b>Why we ask:</b> the FEIE can shelter a band of foreign earned income, but only if you qualify and claim it. It does not cover passive income.",
+  answers:[{v:"yes",t:"Yes, on top of it",risk:0},{v:"partly",t:"Partly",risk:1},{v:"new",t:"No, this is new to me",risk:2}]},
+ {id:"c_5471",dim:"B",scored:true,visibleIf:staying,title:"Do you own 10% or more of a company formed outside the US, and are the Form 5471 and GILTI filings handled?",
+  why:"<b>Why we ask:</b> a US person owning 10%+ of a foreign company faces Form 5471 and the CFC / Subpart F / GILTI regime.",
+  answers:[{v:"none",t:"I don't own a foreign company",risk:0},{v:"handled",t:"Yes, and the filings are handled",risk:0},{v:"unsure",t:"Yes, but the filings are unsure or behind",risk:3},{v:"dunno",t:"Not sure what applies",risk:2}]},
+ {id:"c_pfic",dim:"B",scored:true,visibleIf:staying,title:"Do you hold foreign mutual funds or pooled investment funds (PFICs), and are they reported?",
+  why:"<b>Why we ask:</b> foreign mutual funds are usually PFICs, which carry a punitive tax and Form 8621 reporting unless an election is made.",
+  answers:[{v:"none",t:"No",risk:0},{v:"reported",t:"Yes, reported on Form 8621",risk:0},{v:"unsure",t:"Yes, but not sure they are reported",risk:3},{v:"dunno",t:"Not sure what counts as a PFIC",risk:2}]},
+ {id:"c_fbar",dim:"B",scored:true,visibleIf:staying,title:"Are your FBAR (FinCEN 114) and FATCA (Form 8938) filings current?",
+  why:"<b>Why we ask:</b> these foreign-account reports carry steep penalties and are the most common gap for US persons abroad.",
+  answers:[{v:"current",t:"All current",risk:0},{v:"unsure",t:"Some I'm unsure about",risk:2},{v:"behind",t:"Behind on some",risk:3},{v:"dunno",t:"Don't know what applies",risk:3}]},
+ {id:"t_entities",dim:"C",scored:true,multi:true,cap:3,visibleIf:isF2,title:"Which US entities do you own?",
+  why:"<b>Why we ask:</b> US entities do not all survive your change of status. Select all that apply.",
+  answers:[{v:"llc",t:"US LLC",risk:1},{v:"scorp",t:"S-corporation",risk:2},{v:"ccorp",t:"C-corporation",risk:1},{v:"none",t:"None",risk:0}]},
+ {id:"t_entityplan",dim:"C",scored:true,visibleIf:a=>isF2(a)&&Array.isArray(a.t_entities)&&a.t_entities.length>0,title:"Have you planned what happens to these entities when you become a non-resident alien?",
+  why:"<b>Why we ask:</b> an S-corporation cannot be held by a non-resident alien, and LLCs and C-corps change character. The restructuring has to happen before you change status.",
+  answers:[{v:"yes",t:"Yes, structured for it",risk:0},{v:"started",t:"Started",risk:1},{v:"no",t:"No",risk:3}]},
+ {id:"t_filings",dim:"C",scored:true,visibleIf:isF2,title:"Are your US filings current before you exit? (5471 / 5472, FBAR, FATCA 8938)",
+  why:"<b>Why we ask:</b> it is far easier to leave the US tax system clean than to fix filings from abroad after you have gone.",
+  answers:[{v:"current",t:"All current",risk:0},{v:"unsure",t:"Some I'm unsure about",risk:2},{v:"behind",t:"Behind on some",risk:3},{v:"dunno",t:"Don't know what applies",risk:3}]},
+ {id:"t_banking",dim:"C",scored:true,visibleIf:isF2,title:"Do you have a plan to keep your US banking and brokerage after you leave?",
   why:"<b>Why we ask:</b> losing access to US accounts when you change status is common. It is far easier to keep them open than to reopen them from abroad.",
   answers:[{v:"yes",t:"Yes",risk:0},{v:"partly",t:"Partly",risk:1},{v:"no",t:"No",risk:2}]},
- {id:"q7",dim:"C",scored:true,visibleIf:isF2,title:"Will you still spend significant time in the US after you leave?",
+ {id:"t_days",dim:"C",scored:true,visibleIf:isF2,title:"Will you still spend significant time in the US after you leave?",
   why:"<b>Why we ask:</b> too many days in the US can re-trigger US tax residency under the substantial presence test, undoing the exit.",
   answers:[{v:"no",t:"No, well under the day count",risk:0},{v:"track",t:"Some, but I will track the days",risk:1},{v:"yes",t:"Yes a lot, or unsure of the count",risk:3}]},
- {id:"q8",dim:"C",scored:true,visibleIf:isF2,title:"Is your destination a US tax-treaty country?",
+ {id:"t_treaty",dim:"C",scored:true,visibleIf:isF2,title:"Is your destination a US tax-treaty country?",
   why:"<b>Why we ask:</b> moving to a non-treaty country can mean higher withholding, no treaty tie-breaker, and no totalization on social security.",
   answers:[{v:"yes",t:"Yes, a treaty country",risk:0},{v:"no",t:"No, a non-treaty country",risk:2},{v:"unsure",t:"Not sure",risk:2}]},
- {id:"q9",dim:"D",scored:true,visibleIf:isUS,title:"Do you already have the right to live where you are going?",
+ {id:"q_dest",dim:"D",scored:true,visibleIf:isUS,title:"Do you already have the right to live where you are going?",
   why:"<b>Why we ask:</b> a residence permit, second citizenship or pending application. If you cannot yet live legally where you are going, the move is not yet real.",
   answers:[{v:"hold",t:"Yes, I already hold residence or citizenship there",risk:0},{v:"progress",t:"Application in progress",risk:1},{v:"route",t:"I know the route, not started",risk:2},{v:"notyet",t:"No, not yet",risk:3}]},
- {id:"q10",dim:"D",scored:true,visibleIf:isUS,title:"Are you moving in the next 24 months?",
+ {id:"q_timeline",dim:"D",scored:true,visibleIf:isUS,title:"Are you moving in the next 24 months?",
   why:"<b>Why we ask:</b> a move in the next 24 months is a planning window that closes the day you change status.",
   answers:[{v:"planned",t:"Planned",risk:2},{v:"considering",t:"Considering it",risk:1},{v:"no",t:"No fixed plan",risk:0}]},
- {id:"q11",dim:"E",scored:true,visibleIf:isUS,title:"Where is your main company incorporated versus where the work is performed?",
+ {id:"q_incorp",dim:"E",scored:true,visibleIf:isUS,title:"Where is your main company incorporated versus where the work is performed?",
   why:"<b>Why we ask:</b> incorporation in one country and real work in another raises management-and-control and substance questions.",
   answers:[{v:"same",t:"Same country",risk:0},{v:"different",t:"Different countries",risk:2},{v:"multiple",t:"Multiple entities across countries",risk:2},{v:"none",t:"No company",risk:1}]},
- {id:"q12",dim:"E",scored:true,visibleIf:isUS,title:"Are your US international filings current? (5471 / 5472 / 8992 / 8865; FBAR; FATCA 8938)",
-  why:"<b>Why we ask:</b> unfiled or uncertain US international filings are the most common, and most fixable, exposure we see.",
-  answers:[{v:"current",t:"All current",risk:0},{v:"unsure",t:"Some I'm unsure about",risk:2},{v:"behind",t:"Behind on some",risk:3},{v:"unknown",t:"Don't know what applies",risk:3}]},
- {id:"q13",dim:"E",scored:true,visibleIf:isUS,title:"Did a professional design your structure, or did it grow ad hoc?",
+ {id:"q_design",dim:"E",scored:true,visibleIf:isUS,title:"Did a professional design your structure, or did it grow ad hoc?",
   why:"<b>Why we ask:</b> a structure that grew ad hoc rarely survives scrutiny. Design beats DIY here.",
   answers:[{v:"designed",t:"Professionally designed",risk:0},{v:"partly",t:"Partly",risk:1},{v:"adhoc",t:"Grew ad hoc",risk:2},{v:"diy",t:"DIY from internet research",risk:3}]},
- {id:"q14",dim:"E",scored:true,visibleIf:isUS,title:"Could you produce mind-and-management documents within a week?",
+ {id:"q_mind",dim:"E",scored:true,visibleIf:isUS,title:"Could you produce mind-and-management documents within a week?",
   why:"<b>Why we ask:</b> if you cannot evidence where the company is managed and controlled, its tax residency is exposed.",
   answers:[{v:"yes",t:"Yes",risk:0},{v:"probably",t:"Probably",risk:1},{v:"no",t:"No",risk:2}]},
- {id:"q15",dim:null,scored:false,visibleIf:isUS,title:"Roughly what annual revenue or income flows through your cross-border setup?",
+ {id:"q_rev",dim:null,scored:false,visibleIf:isUS,title:"Roughly what annual revenue or income flows through your cross-border setup?",
   why:"<b>Why we ask:</b> this sets the stakes and helps us route you to the right person. It does not change your score.",
   answers:[{v:"u100k",t:"Under $100k",risk:0},{v:"100k1m",t:"$100k to $1M",risk:0},{v:"1m10m",t:"$1M to $10M",risk:0},{v:"10m",t:"$10M+",risk:0}]}
 ];
 const FLAG_NOTE={
- q1:"Giving up US citizenship or a long-term green card can trigger the exit tax, a deemed sale of your worldwide assets, if you are a covered expatriate. This is the most expensive thing to get wrong.",
- q2:"The exit tax is a mark-to-market on your worldwide assets at fair market value on the day you expatriate. Without independent valuations, the number is a guess.",
- q3:"You can be a covered expatriate if your net worth is $2M or more, your average US tax liability is over the annual threshold, or you cannot certify five years of compliance on Form 8854.",
- q4:"US citizens and long-term green-card holders are taxed on worldwide income wherever they live. FBAR, FATCA, the foreign earned income exclusion, Form 5471, GILTI and PFIC can all still apply.",
- q5:"A US business does not automatically become tax-free when you leave. Without restructuring, it can stay inside the US net or create new exposure abroad.",
- q6:"Losing access to US banking and brokerage when you change status is common. Plan to keep accounts open before you go.",
- q7:"Spending too many days in the US can re-trigger US tax residency under the substantial presence test, undoing the exit. The day count has to be tracked.",
- q8:"Moving to a country with no US tax treaty can mean higher withholding, no treaty tie-breaker, and no totalization on social security.",
- q9:"If you cannot yet live legally where you are going, the move is not yet real. Securing residency or a second citizenship is the foundation.",
- q10:"A move in the next 24 months is a planning window that closes the day you change status.",
- q11:"Incorporation in one country and real work in another raises management-and-control and substance questions.",
- q12:"Unfiled or uncertain US international filings are the most common, and most fixable, exposure we see.",
- q13:"A structure that grew ad hoc rarely survives scrutiny. This is where design beats DIY.",
- q14:"If you cannot evidence where the company is managed and controlled, its tax residency is exposed."
+ ex_fmv:"The exit tax is a mark-to-market on your worldwide assets at fair market value on the day you expatriate. Without independent valuations, the number is a guess.",
+ ex_covered:"You can be a covered expatriate if your net worth is $2M or more, your average US tax liability is over the annual threshold, or you cannot certify five years of compliance on Form 8854.",
+ c_feie:"The foreign earned income exclusion can shelter a band of foreign earned income, but only if you qualify and claim it. It does not cover passive income.",
+ c_5471:"A US person owning 10%+ of a foreign company faces Form 5471 and the CFC, Subpart F and GILTI regime. Missing or late filings carry heavy penalties.",
+ c_pfic:"Foreign mutual funds are usually PFICs, taxed punitively with Form 8621 reporting unless a QEF or mark-to-market election is made in time.",
+ c_fbar:"FBAR and FATCA reports on foreign accounts carry steep penalties and are the most common gap for US persons abroad.",
+ t_entities:"US entities do not all survive your change of status, and each changes character when you become a non-resident alien. Plan the restructuring before you go.",
+ t_entityplan:"Restructuring US entities has to happen before you become a non-resident alien, not after. An S-corporation in particular cannot be held by an NRA.",
+ t_filings:"It is far easier to leave the US tax system clean than to fix filings from abroad once you have gone.",
+ t_banking:"Losing access to US banking and brokerage when you change status is common. Plan to keep accounts open before you go.",
+ t_days:"Spending too many days in the US can re-trigger US tax residency under the substantial presence test, undoing the exit.",
+ t_treaty:"Moving to a country with no US tax treaty can mean higher withholding, no treaty tie-breaker, and no totalization on social security.",
+ q_dest:"If you cannot yet live legally where you are going, the move is not yet real. Securing residency or a second citizenship is the foundation.",
+ q_timeline:"A move in the next 24 months is a planning window that closes the day you change status.",
+ q_incorp:"Incorporation in one country and real work in another raises management-and-control and substance questions.",
+ q_design:"A structure that grew ad hoc rarely survives scrutiny. This is where design beats DIY.",
+ q_mind:"If you cannot evidence where the company is managed and controlled, its tax residency is exposed."
 };
 const REVENUE_LABEL={u100k:"Under $100k","100k1m":"$100k to $1M","1m10m":"$1M to $10M","10m":"$10M+"};
-const QLABEL={g1:"US status",q1:"Expatriation",q2:"Valuation",q3:"Covered expatriate",q4:"Expat compliance",q5:"Business after exit",q6:"US accounts",q7:"US days",q8:"Treaty",q9:"Destination",q10:"Timeline",q11:"Incorporation vs work",q12:"Filings",q13:"Structure design",q14:"Mind & management",q15:"Revenue"};
+const QLABEL={g1:"US status",renounce:"Plan",ex_fmv:"Valuation",ex_covered:"Covered expatriate",c_feie:"FEIE",c_5471:"Foreign company",c_pfic:"PFIC",c_fbar:"FBAR / FATCA",t_entities:"US entities",t_entityplan:"Entity plan",t_filings:"Filings",t_banking:"US accounts",t_days:"US days",t_treaty:"Treaty",q_dest:"Destination",q_timeline:"Timeline",q_incorp:"Incorporation vs work",q_design:"Structure design",q_mind:"Mind & management",q_rev:"Revenue"};
 
 let answers={}, path=[], currentQ=null, multiSel=new Set(), busy=false;
 const $=id=>document.getElementById(id);
@@ -380,15 +395,20 @@ function renderResult(){
   $('rBadge').innerHTML=`<span class="badge ${sc.tier}">${t.label}</span>`;
   $('rLine').textContent=t.line;
   $('rDims').innerHTML=sc.bars.map(d=>`<div class="dimrow"><div class="lab"><span>${d[0]}</span><span>${d[1]}/100</span></div><div class="track"><div class="fill" style="width:${d[1]}%"></div></div></div>`).join('');
-  $('rRecap').innerHTML = `<span>Score: ${sc.overall}/100</span>` + (answers.q15?`<span>Revenue: ${REVENUE_LABEL[answers.q15]}</span>`:'');
-  const fam=isF1(answers)?"f1":isF2(answers)?"f2":null;
-  const FRAME={f1:"As a US citizen or long-term green-card holder, US tax follows you worldwide, and giving up that status can trigger the exit tax. Your readiness is about ongoing compliance and, if you expatriate, valuation.",f2:"As a shorter-term green-card holder or substantial-presence resident, you can become a non-resident cleanly, with no exit tax. Your readiness is about planning the transition."};
+  $('rRecap').innerHTML = `<span>Score: ${sc.overall}/100</span>` + (answers.q_rev?`<span>Revenue: ${REVENUE_LABEL[answers.q_rev]}</span>`:'');
+  let fam=null; if(isF1(answers)) fam=answers.renounce==="yes"?"f1exit":"f1stay"; else if(isF2(answers)) fam="f2";
+  const FRAME={
+    f1exit:"You are giving up US status, so the exit tax is the headline: a deemed sale of your worldwide assets if you are a covered expatriate. The valuations and the Form 8854 compliance have to be right before you go.",
+    f1stay:"You are staying a US person while abroad, so US tax follows you worldwide. Readiness here is the ongoing filings: the foreign earned income exclusion, Form 5471 and CFC rules, PFICs, FBAR and FATCA.",
+    f2:"You can become a non-resident cleanly, with no exit tax. Readiness is the transition: what happens to your US entities, your banking, your US days, and the treaty."
+  };
   const flagged=visibleQuestions().filter(q=>q.dim&&q.scored&&optRisk(q)>=2&&FLAG_NOTE[q.id]);
   let html=`<h3>${flagged.length?'What we flagged':'What we found'}</h3>`;
   if(fam) html+=`<div class="flagrow" style="border-left:2px solid var(--sienna);padding-left:14px">${FRAME[fam]}</div>`;
   if(flagged.length){ html+=flagged.map(q=>`<div class="flagrow">${FLAG_NOTE[q.id]}</div>`).join(''); }
   else { html+=`<div class="flagrow">Nothing major flagged on these answers. The full report still maps each dimension and a 'what good looks like' checklist so you can keep it that way.</div>`; }
-  if(answers.q9&&answers.q9!=='hold'){ html+=`<div class="flagrow">You do not yet have the right to live where you are going. Our Residency Route Finder maps the Panama route in about three minutes. <a href="route-finder.html" style="color:var(--sienna);font-weight:600;text-decoration:none">Find my route &#8599;</a></div>`; }
+  if(Array.isArray(answers.t_entities)&&answers.t_entities.includes("scorp")){ html+=`<div class="flagrow" style="border-left:2px solid var(--cordovan);padding-left:14px">An S-corporation cannot be owned by a non-resident alien. Becoming an NRA terminates the S-election, so the S-corp has to be restructured before you change status.</div>`; }
+  if(answers.q_dest&&answers.q_dest!=='hold'){ html+=`<div class="flagrow">You do not yet have the right to live where you are going. Our Residency Route Finder maps the Panama route in about three minutes. <a href="route-finder.html" style="color:var(--sienna);font-weight:600;text-decoration:none">Find my route &#8599;</a></div>`; }
   html+=`<p class="ref">Scoring is indicative and weights are being finalised with our Enrolled Agents. It maps where to look, not a precise liability. Some thresholds (the $2M net-worth test, Form 8854, the 8-of-15-years rule) are pending EA confirmation.</p>`;
   $('rFlags').innerHTML=html;
   $('rCta').innerHTML=t.cta+' <span class="arr">&#8599;</span>';
