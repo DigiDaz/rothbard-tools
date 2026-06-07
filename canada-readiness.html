@@ -134,7 +134,7 @@
     <div class="brand"><img alt="Rothbard Group"></div>
     <div class="statement">
       <div class="kicker">Cross-border tools</div>
-      <h2>Eleven questions to <em>your Canada exit score.</em></h2>
+      <h2>A few questions to <em>your Canada exit score.</em></h2>
       <p>A 0 to 100 read on your departure-tax exposure, the ties you are leaving behind, whether you can actually live where you are going, and the integrity of your structure. Honest when the answer is "this needs a person."</p>
     </div>
     <div class="marks">
@@ -158,7 +158,7 @@
     <section class="screen active" id="s-intro">
       <div class="kicker">Free 3-minute scorecard</div>
       <h1>How ready are you to <em>leave Canada</em> <span class="dim">cleanly?</span></h1>
-      <p class="sub">A short scorecard for Canadians planning a move abroad. Eleven quick questions return a 0 to 100 readiness score across four dimensions: your departure-tax exposure, the residential ties you are leaving behind, whether you can actually live where you are going, and the integrity of your structure.</p>
+      <p class="sub">A short scorecard for Canadians preparing to leave. A handful of quick questions return a 0 to 100 readiness score across four dimensions: your departure-tax exposure, the residential ties you are leaving behind, whether you can actually live where you are going, and the integrity of your structure.</p>
       <div class="trust"><span>4 dimensions</span><span>About 3 minutes</span><span>Score stays free</span></div>
       <div class="answers"><button class="btn btn-primary" onclick="start()">Get my score <span class="arr">&rarr;</span></button></div>
     </section>
@@ -172,14 +172,6 @@
         <button class="btn btn-primary" id="continueBtn" onclick="multiContinue()" disabled>Continue <span class="arr">&rarr;</span></button>
       </div>
       <div class="nav"><button class="btn btn-ghost" onclick="goBack()">&larr; Back</button></div>
-    </section>
-
-    <section class="screen" id="s-gate">
-      <div class="kicker">Who this is for</div>
-      <h2>The US tool is the better fit for you.</h2>
-      <div class="why"><b>Why:</b> a US passport or green card makes you taxable by the US wherever you live, which changes the whole analysis. This scorecard is built for Canadians who are not US persons.</div>
-      <p class="sub" style="margin-top:14px">Start with our US cross-border readiness tool instead. It walks the exit tax, expat compliance and the transition questions that apply to you.</p>
-      <div class="answers" style="margin-top:18px"><button class="btn btn-primary" onclick="restart()">&#8635; Start over <span class="arr">&rarr;</span></button></div>
     </section>
 
     <section class="screen" id="s-result">
@@ -211,12 +203,9 @@
 <script>
 const DIM_LABEL={A:"Canada tax exposure",B:"Residential ties",C:"Destination readiness",D:"Structure integrity"};
 const QUESTIONS=[
- {id:"g1",dim:null,scored:false,kick:"Who this is for",title:"Are you a US citizen or green-card holder?",
-  why:"<b>Why we ask:</b> US citizenship or a green card makes you taxable by the US wherever you live, which changes the whole analysis. This scorecard is built for Canadians who are not US persons.",
-  answers:[{v:"yes",t:"Yes",risk:0,gate:true},{v:"no",t:"No",risk:0}]},
- {id:"q1",dim:"A",scored:true,title:"Are you a Canadian tax resident, or did you leave Canada in the last 3 years?",
-  why:"<b>Why we ask:</b> leaving Canada triggers a deemed disposition, and the departure forms are due with your departure-year return.",
-  answers:[{v:"current",t:"Currently a Canadian tax resident",risk:1},{v:"left",t:"Left within the last 3 years",risk:2},{v:"never",t:"Never a Canadian tax resident",risk:0}]},
+ {id:"g1",dim:null,scored:false,kick:"Your situation",title:"Are you also a US citizen or green-card holder?",
+  why:"<b>Why we ask:</b> if you are, you are taxable by both Canada and the US. It does not change your Canada score, but we will flag the US side for you at the end.",
+  answers:[{v:"yes",t:"Yes",risk:0},{v:"no",t:"No",risk:0}]},
  {id:"q2",dim:"A",scored:true,multi:true,cap:4,title:"Which of these do you hold?",
   why:"<b>Why we ask:</b> each asset class has its own deemed-disposition and reporting treatment on exit. Select all that apply.",
   answers:[{v:"ccpc",t:"Private company (CCPC) shares",risk:2},{v:"crypto",t:"Crypto",risk:1},{v:"portfolio",t:"Investment / stock portfolio (non-registered)",risk:1},{v:"registered",t:"Canadian registered accounts (RRSP / RRIF / TFSA)",risk:1},{v:"re_ca",t:"Real estate in Canada",risk:1},{v:"re_abroad",t:"Real estate abroad",risk:1},{v:"none",t:"None of these",risk:0}]},
@@ -252,7 +241,6 @@ const QUESTIONS=[
   answers:[{v:"u100k",t:"Under $100k",risk:0},{v:"100k1m",t:"$100k to $1M",risk:0},{v:"1m10m",t:"$1M to $10M",risk:0},{v:"10m",t:"$10M+",risk:0}]}
 ];
 const FLAG_NOTE={
- q1:"Leaving Canada triggers a deemed disposition; the departure forms are due with your departure-year return.",
  q2:"Each asset class here, private-company shares, crypto, non-registered portfolios, registered accounts, and Canadian and foreign real estate, has its own deemed-disposition and reporting treatment on exit.",
  q3:"Departure tax is calculated on fair market value at the day you cease residency. Without an independent valuation, that number is a guess the CRA can challenge.",
  q4:"Keeping a home available to you in Canada is one of the strongest residential ties; it can keep you a Canadian tax resident even after you leave.",
@@ -265,7 +253,7 @@ const FLAG_NOTE={
  q11:"If you cannot evidence where the company is managed and controlled, its tax residency is exposed."
 };
 const REVENUE_LABEL={u100k:"Under $100k","100k1m":"$100k to $1M","1m10m":"$1M to $10M","10m":"$10M+"};
-const QLABEL={q1:"Canada status",q2:"Assets",q3:"Valuation",q4:"Main home",q5:"Family",q6:"Timeline",q7:"Destination",q8:"Incorporation vs work",q9:"Filings",q10:"Structure design",q11:"Mind & management",q12:"Revenue"};
+const QLABEL={q2:"Assets",q3:"Valuation",q4:"Main home",q5:"Family",q6:"Timeline",q7:"Destination",q8:"Incorporation vs work",q9:"Filings",q10:"Structure design",q11:"Mind & management",q12:"Revenue"};
 
 let answers={}, path=[], currentQ=null, multiSel=new Set(), busy=false;
 const $=id=>document.getElementById(id);
@@ -364,6 +352,7 @@ function renderResult(){
   if(flagged.length){ html=`<h3>What we flagged</h3>`+flagged.map(q=>`<div class="flagrow">${FLAG_NOTE[q.id]}</div>`).join(''); }
   else { html=`<h3>What we found</h3><div class="flagrow">Nothing major flagged on these answers. The full report still maps each dimension and a 'what good looks like' checklist so you can keep it that way.</div>`; }
   if(answers.q7&&answers.q7!=='hold'){ html+=`<div class="flagrow">You do not yet have the right to live where you are going. Our Residency Route Finder maps your Panama route in about three minutes. <a href="route-finder.html" style="color:var(--sienna);font-weight:600;text-decoration:none">Find my route &#8599;</a></div>`; }
+  if(answers.g1==="yes"){ html+=`<div class="flagrow" style="border-left:2px solid var(--cordovan);padding-left:14px">You told us you are also a US person, so you are taxable by both Canada and the US. This Canada score is only half the picture. For a complete analysis, also run our US cross-border readiness tool. <a href="us-readiness.html" style="color:var(--sienna);font-weight:600;text-decoration:none">Run the US tool &#8599;</a></div>`; }
   html+=`<p class="ref">Scoring is indicative and weights are being finalised with our Enrolled Agents. It maps where to look, not a precise liability.</p>`;
   $('rFlags').innerHTML=html;
   $('rCta').innerHTML=t.cta+' <span class="arr">&#8599;</span>';
