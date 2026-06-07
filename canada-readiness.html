@@ -267,7 +267,7 @@ const FLAG_NOTE={
 const REVENUE_LABEL={u100k:"Under $100k","100k1m":"$100k to $1M","1m10m":"$1M to $10M","10m":"$10M+"};
 const QLABEL={q1:"Canada status",q2:"Assets",q3:"Valuation",q4:"Main home",q5:"Family",q6:"Timeline",q7:"Destination",q8:"Incorporation vs work",q9:"Filings",q10:"Structure design",q11:"Mind & management",q12:"Revenue"};
 
-let answers={}, path=[], currentQ=null, multiSel=new Set();
+let answers={}, path=[], currentQ=null, multiSel=new Set(), busy=false;
 const $=id=>document.getElementById(id);
 function visibleQuestions(){ return QUESTIONS.filter(q=>!q.visibleIf||q.visibleIf(answers)); }
 function totalSteps(){ return visibleQuestions().length; }
@@ -292,8 +292,8 @@ const TIER={
   red:{label:"High exposure",line:"Your exit carries significant unmanaged exposure on these answers. This is worth a priority review.",cta:"Book a priority review"}
 };
 function show(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));$(id).classList.add('active');window.scrollTo({top:0,behavior:'smooth'});}
-function start(){answers={};path=[];multiSel=new Set();next();}
-function restart(){currentQ=null;$('progress').style.opacity=0;$('stepline').style.visibility='hidden';var g=$('gateOk');if(g)g.style.display='none';var em=$('email');if(em)em.value='';show('s-intro');}
+function start(){answers={};path=[];multiSel=new Set();busy=false;next();}
+function restart(){currentQ=null;busy=false;$('progress').style.opacity=0;$('stepline').style.visibility='hidden';var g=$('gateOk');if(g)g.style.display='none';var em=$('email');if(em)em.value='';show('s-intro');}
 function next(){ const qid=nextQuestionId(); if(qid===null){currentQ=null;renderResult();return;} const q=QUESTIONS.find(x=>x.id===qid); path.push(qid); renderQ(q); }
 function pick(q,o,btn){
   if(q.multi){
@@ -303,9 +303,10 @@ function pick(q,o,btn){
     $('continueBtn').disabled = multiSel.size===0;
     return;
   }
+  if(busy)return; busy=true;
   document.querySelectorAll('#qAnswers .ans').forEach(x=>x.classList.remove('picked'));
   btn.classList.add('picked');
-  setTimeout(()=>{ answers[q.id]=o.v; if(o.gate){ show('s-gate'); return; } next(); }, 280);
+  setTimeout(()=>{ busy=false; answers[q.id]=o.v; if(o.gate){ show('s-gate'); return; } next(); }, 280);
 }
 function multiContinue(){ const q=currentQ; const sel=Array.from(multiSel).filter(v=>v!=="none"); answers[q.id]=sel; multiSel=new Set(); next(); }
 function renderQ(q){
