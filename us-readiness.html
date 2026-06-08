@@ -263,19 +263,25 @@ const QUESTIONS=[
  {id:"t_treaty",dim:"C",scored:true,visibleIf:isF2,title:"Is your destination a US tax-treaty country?",
   why:"<b>Why we ask:</b> moving to a non-treaty country can mean higher withholding, no treaty tie-breaker, and no totalization on social security.",
   answers:[{v:"yes",t:"Yes, a treaty country",risk:0},{v:"no",t:"No, a non-treaty country",risk:2},{v:"unsure",t:"Not sure",risk:2}]},
+ {id:"t_eci",dim:"C",scored:true,visibleIf:isF2,title:"After you leave the US, will you keep doing business with or through the United States?",
+  why:"<b>Why we ask:</b> US customers, US operations or US-source business income can be effectively connected income (ECI), taxable in the US even as a non-resident. We do not model every scenario here, only whether an ECI analysis is warranted.",
+  answers:[{v:"no",t:"No, I'm cutting US business ties",risk:0},{v:"yes",t:"Yes, I'll keep doing business with the US",risk:2},{v:"unsure",t:"Not sure yet",risk:1}]},
+ {id:"t_fdap",dim:"C",scored:true,visibleIf:isF2,title:"After you leave, will you keep investments in the United States (securities, real estate, and the like)?",
+  why:"<b>Why we ask:</b> US-source investment income paid to a non-resident, dividends, interest, rents and royalties, is FDAP income, generally withheld at 30% unless a treaty lowers it. Keeping US investments means planning for it.",
+  answers:[{v:"no",t:"No, I'll hold no US investments",risk:0},{v:"yes",t:"Yes, securities, real estate or similar",risk:2},{v:"unsure",t:"Not sure yet",risk:1}]},
  {id:"q_dest",dim:"D",scored:true,visibleIf:isUS,title:"Do you already have the right to live where you are going?",
   why:"<b>Why we ask:</b> a residence permit, second citizenship or pending application. If you cannot yet live legally where you are going, the move is not yet real.",
   answers:[{v:"hold",t:"Yes, I already hold residence or citizenship there",risk:0},{v:"progress",t:"Application in progress",risk:1},{v:"route",t:"I know the route, not started",risk:2},{v:"notyet",t:"No, not yet",risk:3}]},
  {id:"q_timeline",dim:"D",scored:true,visibleIf:isUS,title:"Are you moving in the next 24 months?",
   why:"<b>Why we ask:</b> a move in the next 24 months is a planning window that closes the day you change status.",
   answers:[{v:"planned",t:"Planned",risk:2},{v:"considering",t:"Considering it",risk:1},{v:"no",t:"No fixed plan",risk:0}]},
- {id:"q_incorp",dim:"E",scored:true,visibleIf:isUS,title:"Where is your main company incorporated versus where the work is performed?",
+ {id:"q_incorp",dim:"E",scored:true,visibleIf:isF1,title:"Where is your main company incorporated versus where the work is performed?",
   why:"<b>Why we ask:</b> incorporation in one country and real work in another raises management-and-control and substance questions.",
   answers:[{v:"same",t:"Same country",risk:0},{v:"different",t:"Different countries",risk:2},{v:"multiple",t:"Multiple entities across countries",risk:2},{v:"none",t:"No company",risk:1}]},
- {id:"q_design",dim:"E",scored:true,visibleIf:isUS,title:"Did a professional design your structure, or did it grow ad hoc?",
+ {id:"q_design",dim:"E",scored:true,visibleIf:isF1,title:"Did a professional design your structure, or did it grow ad hoc?",
   why:"<b>Why we ask:</b> a structure that grew ad hoc rarely survives scrutiny. Design beats DIY here.",
   answers:[{v:"designed",t:"Professionally designed",risk:0},{v:"partly",t:"Partly",risk:1},{v:"adhoc",t:"Grew ad hoc",risk:2},{v:"diy",t:"DIY from internet research",risk:3}]},
- {id:"q_mind",dim:"E",scored:true,visibleIf:isUS,title:"Could you produce mind-and-management documents within a week?",
+ {id:"q_mind",dim:"E",scored:true,visibleIf:isF1,title:"Could you produce mind-and-management documents within a week?",
   why:"<b>Why we ask:</b> if you cannot evidence where the company is managed and controlled, its tax residency is exposed.",
   answers:[{v:"yes",t:"Yes",risk:0},{v:"probably",t:"Probably",risk:1},{v:"no",t:"No",risk:2}]},
  {id:"q_rev",dim:null,scored:false,visibleIf:isUS,title:"Roughly what annual revenue or income flows through your cross-border setup?",
@@ -295,6 +301,8 @@ const FLAG_NOTE={
  t_banking:"Losing access to US banking and brokerage when you change status is common. Plan to keep accounts open before you go.",
  t_days:"Spending too many days in the US can re-trigger US tax residency under the substantial presence test, undoing the exit.",
  t_treaty:"Moving to a country with no US tax treaty can mean higher withholding, no treaty tie-breaker, and no totalization on social security.",
+ t_eci:"Doing business with or through the US after you leave can create effectively connected income (ECI), taxable in the US even as a non-resident. This is worth an ECI analysis before you go.",
+ t_fdap:"US-source investment income paid to a non-resident, dividends, interest, rents and royalties, is FDAP income, generally withheld at 30% unless a treaty lowers it. Keeping US investments means planning for it.",
  q_dest:"If you cannot yet live legally where you are going, the move is not yet real. Securing residency or a second citizenship is the foundation.",
  q_timeline:"A move in the next 24 months is a planning window that closes the day you change status.",
  q_incorp:"Incorporation in one country and real work in another raises management-and-control and substance questions.",
@@ -302,7 +310,7 @@ const FLAG_NOTE={
  q_mind:"If you cannot evidence where the company is managed and controlled, its tax residency is exposed."
 };
 const REVENUE_LABEL={u100k:"Under $100k","100k1m":"$100k to $1M","1m10m":"$1M to $10M","10m":"$10M+"};
-const QLABEL={g1:"US status",renounce:"Plan",ex_fmv:"Valuation",ex_covered:"Covered expatriate",c_feie:"FEIE",c_cfc:"Foreign company / CFC",c_pfic:"PFIC",c_fbar:"FBAR / FATCA",t_entities:"Business tax class",t_entityplan:"Entity plan",t_filings:"Filings",t_banking:"US accounts",t_days:"US days",t_treaty:"Treaty",q_dest:"Destination",q_timeline:"Timeline",q_incorp:"Incorporation vs work",q_design:"Structure design",q_mind:"Mind & management",q_rev:"Revenue"};
+const QLABEL={g1:"US status",renounce:"Plan",ex_fmv:"Valuation",ex_covered:"Covered expatriate",c_feie:"FEIE",c_cfc:"Foreign company / CFC",c_pfic:"PFIC",c_fbar:"FBAR / FATCA",t_entities:"Business tax class",t_entityplan:"Entity plan",t_filings:"Filings",t_banking:"US accounts",t_days:"US days",t_treaty:"Treaty",t_eci:"US business link",t_fdap:"US investments",q_dest:"Destination",q_timeline:"Timeline",q_incorp:"Incorporation vs work",q_design:"Structure design",q_mind:"Mind & management",q_rev:"Revenue"};
 
 let answers={}, path=[], currentQ=null, multiSel=new Set(), busy=false;
 const $=id=>document.getElementById(id);
