@@ -236,18 +236,18 @@ const QUESTIONS=[
  {id:"c_feie",dim:"B",scored:true,visibleIf:staying,title:"Are you set up to use the foreign earned income exclusion (Form 2555) where it applies?",
   why:"<b>Why we ask:</b> the FEIE can shelter a band of foreign earned income, but only if you qualify and claim it. It does not cover passive income.",
   answers:[{v:"yes",t:"Yes, on top of it",risk:0},{v:"partly",t:"Partly",risk:1},{v:"new",t:"No, this is new to me",risk:2}]},
- {id:"c_5471",dim:"B",scored:true,visibleIf:staying,title:"Do you own 10% or more of a company formed outside the US, and are the Form 5471 and GILTI filings handled?",
-  why:"<b>Why we ask:</b> a US person owning 10%+ of a foreign company faces Form 5471 and the CFC / Subpart F / GILTI regime.",
-  answers:[{v:"none",t:"I don't own a foreign company",risk:0},{v:"handled",t:"Yes, and the filings are handled",risk:0},{v:"unsure",t:"Yes, but the filings are unsure or behind",risk:3},{v:"dunno",t:"Not sure what applies",risk:2}]},
- {id:"c_pfic",dim:"B",scored:true,visibleIf:staying,title:"Do you hold foreign mutual funds or pooled investment funds (PFICs), and are they reported?",
-  why:"<b>Why we ask:</b> foreign mutual funds are usually PFICs, which carry a punitive tax and Form 8621 reporting unless an election is made.",
-  answers:[{v:"none",t:"No",risk:0},{v:"reported",t:"Yes, reported on Form 8621",risk:0},{v:"unsure",t:"Yes, but not sure they are reported",risk:3},{v:"dunno",t:"Not sure what counts as a PFIC",risk:2}]},
+ {id:"c_cfc",dim:"B",scored:true,visibleIf:staying,title:"Do you own, or plan to own, more than 50% of a foreign company?",
+  why:"<b>Why we ask:</b> owning more than 50% of a foreign company (by vote or value) makes it a controlled foreign corporation, with Form 5471, Subpart F and net CFC tested income (NCTI, the rules that replaced GILTI). If it is a CFC, the PFIC rules do not also apply.",
+  answers:[{v:"no",t:"No, I will not own more than 50%",risk:0},{v:"handled",t:"Yes, and the Form 5471 and NCTI filings are handled",risk:0},{v:"unsure",t:"Yes, but the filings are unsure or behind",risk:3},{v:"dunno",t:"Not sure",risk:2}]},
+ {id:"c_pfic",dim:"B",scored:true,visibleIf:a=>staying(a)&&a.c_cfc==="no",title:"Will you hold stock in a foreign company that mainly serves as a passive investment vehicle?",
+  why:"<b>Why we ask:</b> a foreign company that is mainly passive can be a PFIC, taxed punitively with Form 8621 reporting. This includes a privately held company, not just foreign mutual funds. It only matters when the company is not a controlled foreign corporation, which is why we asked that first.",
+  answers:[{v:"none",t:"No",risk:0},{v:"reported",t:"Yes, and it is reported on Form 8621",risk:0},{v:"unsure",t:"Yes, but not sure it is reported",risk:3},{v:"dunno",t:"Not sure what counts as a PFIC",risk:2}]},
  {id:"c_fbar",dim:"B",scored:true,visibleIf:staying,title:"Are your FBAR (FinCEN 114) and FATCA (Form 8938) filings current?",
   why:"<b>Why we ask:</b> these foreign-account reports carry steep penalties and are the most common gap for US persons abroad.",
   answers:[{v:"current",t:"All current",risk:0},{v:"unsure",t:"Some I'm unsure about",risk:2},{v:"behind",t:"Behind on some",risk:3},{v:"dunno",t:"Don't know what applies",risk:3}]},
- {id:"t_entities",dim:"C",scored:true,multi:true,cap:3,visibleIf:isF2,title:"Which US entities do you own?",
-  why:"<b>Why we ask:</b> US entities do not all survive your change of status. Select all that apply.",
-  answers:[{v:"llc",t:"US LLC",risk:1},{v:"scorp",t:"S-corporation",risk:2},{v:"ccorp",t:"C-corporation",risk:1},{v:"none",t:"None",risk:0}]},
+ {id:"t_entities",dim:"C",scored:true,multi:true,cap:3,visibleIf:isF2,title:"How is your US business taxed?",
+  why:"<b>Why we ask:</b> this is the tax classification, not the entity type. What matters when you change status is how the business is taxed, and an S-election in particular does not survive. Select all that apply.",
+  answers:[{v:"ccorp",t:"C-corporation",s:"A corporation, or an LLC taxed as a C-corp",risk:1},{v:"scorp",t:"S-corporation",s:"A corporation or LLC with an S-election",risk:2},{v:"partnership",t:"Partnership",s:"The default for a multi-member LLC",risk:1},{v:"soleprop",t:"Sole proprietorship / disregarded",s:"The default for a single-member LLC",risk:1},{v:"none",t:"None",risk:0}]},
  {id:"t_entityplan",dim:"C",scored:true,visibleIf:a=>isF2(a)&&Array.isArray(a.t_entities)&&a.t_entities.length>0,title:"Have you planned what happens to these entities when you become a non-resident alien?",
   why:"<b>Why we ask:</b> an S-corporation cannot be held by a non-resident alien, and LLCs and C-corps change character. The restructuring has to happen before you change status.",
   answers:[{v:"yes",t:"Yes, structured for it",risk:0},{v:"started",t:"Started",risk:1},{v:"no",t:"No",risk:3}]},
@@ -286,10 +286,10 @@ const FLAG_NOTE={
  ex_fmv:"The exit tax is a mark-to-market on your worldwide assets at fair market value on the day you expatriate. Without independent valuations, the number is a guess.",
  ex_covered:"You can be a covered expatriate if your net worth is $2M or more, your average US tax liability is over the annual threshold, or you cannot certify five years of compliance on Form 8854.",
  c_feie:"The foreign earned income exclusion can shelter a band of foreign earned income, but only if you qualify and claim it. It does not cover passive income.",
- c_5471:"A US person owning 10%+ of a foreign company faces Form 5471 and the CFC, Subpart F and GILTI regime. Missing or late filings carry heavy penalties.",
- c_pfic:"Foreign mutual funds are usually PFICs, taxed punitively with Form 8621 reporting unless a QEF or mark-to-market election is made in time.",
+ c_cfc:"Owning more than 50% of a foreign company makes it a controlled foreign corporation: Form 5471, Subpart F, and net CFC tested income (NCTI, the rules that replaced GILTI). Missing or late filings carry heavy penalties.",
+ c_pfic:"A foreign company that is mainly passive can be a PFIC, taxed punitively with Form 8621 reporting, but only when it is not a controlled foreign corporation. Foreign mutual funds are the classic case, but a private holding company can qualify too.",
  c_fbar:"FBAR and FATCA reports on foreign accounts carry steep penalties and are the most common gap for US persons abroad.",
- t_entities:"US entities do not all survive your change of status, and each changes character when you become a non-resident alien. Plan the restructuring before you go.",
+ t_entities:"How the business is taxed, not its entity type, is what drives the result when you change status. Each tax classification reacts differently, and an S-election cannot survive a non-resident-alien owner.",
  t_entityplan:"Restructuring US entities has to happen before you become a non-resident alien, not after. An S-corporation in particular cannot be held by an NRA.",
  t_filings:"It is far easier to leave the US tax system clean than to fix filings from abroad once you have gone.",
  t_banking:"Losing access to US banking and brokerage when you change status is common. Plan to keep accounts open before you go.",
@@ -302,7 +302,7 @@ const FLAG_NOTE={
  q_mind:"If you cannot evidence where the company is managed and controlled, its tax residency is exposed."
 };
 const REVENUE_LABEL={u100k:"Under $100k","100k1m":"$100k to $1M","1m10m":"$1M to $10M","10m":"$10M+"};
-const QLABEL={g1:"US status",renounce:"Plan",ex_fmv:"Valuation",ex_covered:"Covered expatriate",c_feie:"FEIE",c_5471:"Foreign company",c_pfic:"PFIC",c_fbar:"FBAR / FATCA",t_entities:"US entities",t_entityplan:"Entity plan",t_filings:"Filings",t_banking:"US accounts",t_days:"US days",t_treaty:"Treaty",q_dest:"Destination",q_timeline:"Timeline",q_incorp:"Incorporation vs work",q_design:"Structure design",q_mind:"Mind & management",q_rev:"Revenue"};
+const QLABEL={g1:"US status",renounce:"Plan",ex_fmv:"Valuation",ex_covered:"Covered expatriate",c_feie:"FEIE",c_cfc:"Foreign company / CFC",c_pfic:"PFIC",c_fbar:"FBAR / FATCA",t_entities:"Business tax class",t_entityplan:"Entity plan",t_filings:"Filings",t_banking:"US accounts",t_days:"US days",t_treaty:"Treaty",q_dest:"Destination",q_timeline:"Timeline",q_incorp:"Incorporation vs work",q_design:"Structure design",q_mind:"Mind & management",q_rev:"Revenue"};
 
 let answers={}, path=[], currentQ=null, multiSel=new Set(), busy=false;
 const $=id=>document.getElementById(id);
@@ -399,7 +399,7 @@ function renderResult(){
   let fam=null; if(isF1(answers)) fam=answers.renounce==="yes"?"f1exit":"f1stay"; else if(isF2(answers)) fam="f2";
   const FRAME={
     f1exit:"You are giving up US status, so the exit tax is the headline: a deemed sale of your worldwide assets if you are a covered expatriate. The valuations and the Form 8854 compliance have to be right before you go.",
-    f1stay:"You are staying a US person while abroad, so US tax follows you worldwide. Readiness here is the ongoing filings: the foreign earned income exclusion, Form 5471 and CFC rules, PFICs, FBAR and FATCA.",
+    f1stay:"You are staying a US person while abroad, so US tax follows you worldwide. Readiness here is the ongoing filings: the foreign earned income exclusion, controlled-foreign-company rules and net CFC tested income (which replaced GILTI), PFICs where they apply, and FBAR and FATCA.",
     f2:"You can become a non-resident cleanly, with no exit tax. Readiness is the transition: what happens to your US entities, your banking, your US days, and the treaty."
   };
   const flagged=visibleQuestions().filter(q=>q.dim&&q.scored&&optRisk(q)>=2&&FLAG_NOTE[q.id]);
